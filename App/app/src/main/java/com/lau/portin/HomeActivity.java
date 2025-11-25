@@ -2,6 +2,7 @@ package com.lau.portin;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,7 +27,7 @@ public class HomeActivity extends AppCompatActivity {
     InternshipAdapter adapter;
     SwipeRefreshLayout swipeRefreshLayout;
     SearchView searchBar;
-
+    String type;
     public static final String BASE_URL = "http://10.0.2.2/portin/";
 
     @Override
@@ -45,10 +46,21 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(i);
         });
 
-
+        Intent intent = getIntent();
+        if (intent != null) {
+            type = intent.getStringExtra("type");
+            if (type != null) {
+                if (type.equals("Company")) {
+                    fab.setVisibility(View.VISIBLE);
+                }
+                else {
+                    fab.setVisibility(View.GONE);
+                }
+            }
+        }
         // recycler setup
         rv.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new InternshipAdapter(list);
+        adapter = new InternshipAdapter(list, type);
         rv.setAdapter(adapter);
 
         // load data
@@ -97,7 +109,7 @@ public class HomeActivity extends AppCompatActivity {
                             ));
                         }
 
-                        adapter = new InternshipAdapter(list);
+                        adapter = new InternshipAdapter(list, type);
                         rv.setAdapter(adapter);
 
                     } catch (Exception e) {
