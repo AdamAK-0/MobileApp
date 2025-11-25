@@ -23,10 +23,12 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
 
     List<Internship> list;
     private ArrayList<Internship> originalList;
+    static String type;
 
-    public InternshipAdapter(ArrayList<Internship> list) {
+    public InternshipAdapter(ArrayList<Internship> list, String type) {
         this.list = list;
         this.originalList = new ArrayList<>(list);
+        InternshipAdapter.type = type;
     }
 
     public void filter(String text) {
@@ -64,6 +66,14 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
             img = v.findViewById(R.id.imgInternship);
             btnEdit = v.findViewById(R.id.btnEdit);
             btnDelete = v.findViewById(R.id.btnDelete);
+            if(type.equals("Company")) {
+                btnEdit.setVisibility(View.VISIBLE);
+                btnDelete.setVisibility(View.VISIBLE);
+            }
+            else {
+                btnEdit.setVisibility(View.GONE);
+                btnDelete.setVisibility(View.GONE);
+            }
         }
     }
 
