@@ -289,63 +289,101 @@ public class MainActivity extends AppCompatActivity {
     }
 
         void authenticateUser() {
-        String urlUser = BASE_URL + "authenticate_user.php";
-        String urlCompany = BASE_URL + "authenticate_company.php";
+            String urlUser = BASE_URL + "authenticate_user.php";
+            String urlCompany = BASE_URL + "authenticate_company.php";
 
-        String selected = spinnerLogin.getSelectedItem().toString();
-        btnSubmit.setEnabled(false);
-        tvToggle.setEnabled(false);
-        StringRequest req = new StringRequest(Request.Method.POST,
-                selected.equals("User") ? urlUser : urlCompany,
-                response -> {
-                    try {
-                        JSONObject obj = new JSONObject(response);
-                        String status = obj.getString("status");
+            String selected = spinnerLogin.getSelectedItem().toString();
+            btnSubmit.setEnabled(false);
+            tvToggle.setEnabled(false);
+            StringRequest req = new StringRequest(Request.Method.POST,
+                    selected.equals("User") ? urlUser : urlCompany,
+                    response -> {
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            String status = obj.getString("status");
 
-                        if (status.equals("success")) {
-                            int userId;
-                            String firstName;
-                            if(selected.equals("Company")) {
-                                firstName = obj.getString("company_id");
-                                userId = obj.getInt("company_id");
+                            if (status.equals("success")) {
+
+                                if (selected.equals("User")) {
+                                    JSONObject u = obj.getJSONObject("user");
+
+                                    User user = new User(
+                                            u.getInt("user_id"),
+                                            u.getString("first_name"),
+                                            u.optString("middle_name", ""),
+                                            u.optString("last_name", ""),
+                                            u.getInt("birth_year"),
+                                            u.getString("email"),
+                                            u.getString("password"),
+                                            u.optString("photo", ""),
+                                            u.optString("transcript", ""),
+                                            u.getString("created_at")
+                                    );
+
+                                    if (rememberLogin.isChecked()) {
+                                        saveLogin(etEmailLogin.getText().toString(), etPasswordLogin.getText().toString());
+                                    }
+
+                                    Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+
+                                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                    intent.putExtra("type", "User");
+                                    intent.putExtra("user", user);
+                                    startActivity(intent);
+                                    finish();
+
+                                } else {   // COMPANY LOGIN
+
+                                    JSONObject c = obj.getJSONObject("company");
+
+                                    Company company = new Company(
+                                            c.getInt("company_id"),
+                                            c.getString("name"),
+                                            c.getString("email"),
+                                            c.getString("password"),
+                                            c.optString("photo", ""),
+                                            (float) c.optDouble("rating", 0.0),
+                                            c.optString("description", ""),
+                                            c.optString("created_at", "")
+                                    );
+
+                                    if (rememberLogin.isChecked()) {
+                                        saveLogin(etEmailLogin.getText().toString(), etPasswordLogin.getText().toString());
+                                    }
+
+                                    Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+
+                                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                    intent.putExtra("type", "Company");
+                                    intent.putExtra("company", company);
+                                    startActivity(intent);
+                                    finish();
+                                }
+
+                            } else if (status.equals("wrong_password")) {
+                                Toast.makeText(MainActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
+
+                            } else if (status.equals("not_found")) {
+                                Toast.makeText(MainActivity.this, "User not found", Toast.LENGTH_SHORT).show();
                             }
-                            else {
-                                firstName = obj.getString("first_name");
-                                userId = obj.getInt("user_id");
-                            }
 
-                            if (rememberLogin.isChecked()) {
-                                saveLogin(etEmailLogin.getText().toString(), etPasswordLogin.getText().toString());
-                            }
-
-                            Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-
-                            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                            intent.putExtra("user_id", userId);
-                            intent.putExtra("first_name", firstName);
-                            startActivity(intent);
-                            finish();
-                        } else if (status.equals("wrong_password")) {
-                            Toast.makeText(MainActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
-                        } else if (status.equals("not_found")) {
-                            Toast.makeText(MainActivity.this, "User not found", Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                },
-                error -> Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show()
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> map = new HashMap<>();
-                map.put("email", etEmailLogin.getText().toString());
-                map.put("password", etPasswordLogin.getText().toString());
-                return map;
-            }
-        };
-        btnSubmit.setEnabled(true);
-        tvToggle.setEnabled(true);
-        Volley.newRequestQueue(this).add(req);
-    }
+                    },
+                    error -> Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show()
+            ) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("email", etEmailLogin.getText().toString());
+                    map.put("password", etPasswordLogin.getText().toString());
+                    return map;
+                }
+            };
+
+            Volley.newRequestQueue(this).add(req);
+            btnSubmit.setEnabled(true);
+            tvToggle.setEnabled(true);
+        }
 }

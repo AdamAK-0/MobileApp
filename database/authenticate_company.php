@@ -8,12 +8,19 @@ $query = "SELECT * FROM companies WHERE email='$email'";
 $result = mysqli_query($con, $query);
 
 if ($row = mysqli_fetch_assoc($result)) {
+
     if (password_verify($password, $row['password'])) {
-        echo json_encode(["status" => "success", "company_id" => $row['company_id']]);
+
+        echo json_encode([
+            "status" => "success",
+            "company" => $row
+        ]);
+
     } else {
-        echo "wrong_password";
+        echo json_encode(["status" => "wrong_password"]);
     }
+
 } else {
-    echo "not_found";
+    echo json_encode(["status" => "not_found"]);
 }
 ?>
