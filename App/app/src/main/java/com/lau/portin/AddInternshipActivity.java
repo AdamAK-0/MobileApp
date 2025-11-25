@@ -2,9 +2,11 @@ package com.lau.portin;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -15,7 +17,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.text.ParseException;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -27,7 +33,7 @@ import java.io.ByteArrayOutputStream;
 
 public class AddInternshipActivity extends AppCompatActivity {
 
-    EditText name, desc, rating, start, end, slots;
+    EditText name, desc, start, end, slots;
     Spinner type;
     Button btnSubmit, btnSelectImage;
     ImageView imgPreview;
@@ -48,7 +54,6 @@ public class AddInternshipActivity extends AppCompatActivity {
 
         name = findViewById(R.id.internName);
         desc = findViewById(R.id.internDesc);
-        rating = findViewById(R.id.internRating);
         start = findViewById(R.id.internStart);
         end = findViewById(R.id.internEnd);
         slots = findViewById(R.id.internSlots);
@@ -58,6 +63,8 @@ public class AddInternshipActivity extends AppCompatActivity {
         imgPreview = findViewById(R.id.imgPreview);
 
         setupSpinner();
+        start.setOnClickListener(v -> showDatePicker(start));
+        end.setOnClickListener(v -> showDatePicker(end));
         btnSelectImage.setOnClickListener(v -> pickImage());
         btnSubmit.setOnClickListener(v -> validateAndSubmit());
         editMode = getIntent().getBooleanExtra("edit_mode", false);
@@ -83,6 +90,19 @@ public class AddInternshipActivity extends AppCompatActivity {
             imageFileName = internship.getPhoto();
         }
 
+    }
+    private void showDatePicker(EditText target) {
+        Calendar c = Calendar.getInstance();
+        DatePickerDialog dp = new DatePickerDialog(this,
+                (view, year, month, day) -> {
+                    String date = year + "-" + (month+1) + "-" + day;
+                    target.setText(date);
+                },
+                c.get(Calendar.YEAR),
+                c.get(Calendar.MONTH),
+                c.get(Calendar.DAY_OF_MONTH)
+        );
+        dp.show();
     }
     private int getSpinnerIndex(Spinner spinner, String value) {
         for (int i = 0; i < spinner.getCount(); i++) {
@@ -121,22 +141,86 @@ public class AddInternshipActivity extends AppCompatActivity {
     }
 
     void validateAndSubmit() {
-        if (name.getText().toString().isEmpty()) {
-            name.setError("Required");
-            return;
-        }
-        if (desc.getText().toString().isEmpty()) {
-            desc.setError("Required");
+
+        // ---- NAME ----
+        if (name.getText().toString().trim().isEmpty()) {
+            name.setError("Internship name is required");
             return;
         }
 
-        // if bitmap is selected, upload it; otherwise, use placeholder filename
+        // ---- DESCRIPTION ----
+        if (desc.getText().toString().trim().isEmpty()) {
+            desc.setError("Description is required");
+            return;
+        }
+
+        // ---- SLOTS ----
+        String slotStr = slots.getText().toString().trim();
+        if (slotStr.isEmpty()) {
+            slots.setError("Max slots required");
+            return;
+        }
+
+        int slotNumber;
+        try {
+            slotNumber = Integer.parseInt(slotStr);
+            if (slotNumber <= 0) {
+                slots.setError("Slots must be greater than 0");
+                return;
+            }
+        } catch (Exception e) {
+            slots.setError("Enter a valid number");
+            return;
+        }
+
+        // ---- DATES ----
+        String startStr = start.getText().toString().trim();
+        String endStr   = end.getText().toString().trim();
+
+        if (startStr.isEmpty()) {
+            start.setError("Start date required");
+            return;
+        }
+
+        if (endStr.isEmpty()) {
+            end.setError("End date required");
+            return;
+        }
+
+        // Validate format YYYY-MM-DD
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.setLenient(false);
+
+        Date startDate, endDate;
+        try {
+            startDate = sdf.parse(startStr);
+        } catch (Exception e) {
+            start.setError("Invalid format (YYYY-MM-DD)");
+            return;
+        }
+
+        try {
+            endDate = sdf.parse(endStr);
+        } catch (Exception e) {
+            end.setError("Invalid format (YYYY-MM-DD)");
+            return;
+        }
+
+        // Compare dates
+        if (!startDate.before(endDate)) {
+            end.setError("End date must be AFTER start date");
+            return;
+        }
+
+        // ---- IMAGE LOGIC ----
         if (selectedBitmap != null) {
-            uploadImage();
+            uploadImage();  // upload then submit automatically
         } else {
-            if(imageFileName.isEmpty())
-                submitData("ic_image.jpg"); // just pass placeholder name
-            else {
+            // No bitmap, check filename
+            if (imageFileName.isEmpty()) {
+                submitData("ic_image.jpg");  // default placeholder
+            } else {
+                // Clean URL prefix if exists
                 if (imageFileName.startsWith(BASE_URL + "uploads/")) {
                     imageFileName = imageFileName.replace(BASE_URL + "uploads/", "");
                 }
@@ -185,10 +269,10 @@ public class AddInternshipActivity extends AppCompatActivity {
             protected java.util.Map<String, String> getParams() {
                 java.util.Map<String, String> map = new java.util.HashMap<>();
 
-                map.put("company_id", String.valueOf(c.getCompany_id())); // temporary
+                map.put("company_id", String.valueOf(c.getCompany_id()));
                 map.put("name", name.getText().toString());
                 map.put("description", desc.getText().toString());
-                map.put("rating", rating.getText().toString());
+                map.put("rating", 0 + "");
                 map.put("start_date", start.getText().toString());
                 map.put("end_date", end.getText().toString());
                 map.put("type", type.getSelectedItem().toString());

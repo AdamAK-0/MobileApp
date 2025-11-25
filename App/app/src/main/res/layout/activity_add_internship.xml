@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
     <LinearLayout
         android:orientation="vertical"
@@ -9,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!-- Image Preview -->
         <ImageView
             android:id="@+id/imgPreview"
             android:layout_width="150dp"
@@ -16,65 +18,79 @@
             android:layout_gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_image"
-            android:background="#E0E0E0" />
+            android:background="#E0E0E0"
+            android:layout_marginBottom="10dp" />
 
+        <!-- Select Image Button -->
         <Button
             android:id="@+id/btnSelectImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Select Image" />
+            android:text="Select Image"
+            android:layout_marginBottom="20dp" />
 
+        <!-- Internship Name -->
         <EditText
             android:id="@+id/internName"
             android:hint="Internship Name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" />
 
+        <!-- Description -->
         <EditText
             android:id="@+id/internDesc"
             android:hint="Description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minLines="3"
-            android:gravity="top" />
+            android:gravity="top"
+            android:layout_marginTop="10dp" />
 
-        <EditText
-            android:id="@+id/internRating"
-            android:hint="Rating"
-            android:inputType="numberDecimal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
+        <!-- Start Date -->
         <EditText
             android:id="@+id/internStart"
             android:hint="Start Date (YYYY-MM-DD)"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:clickable="true"
+            android:layout_marginTop="10dp" />
 
+        <!-- End Date -->
         <EditText
             android:id="@+id/internEnd"
             android:hint="End Date (YYYY-MM-DD)"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:clickable="true"
+            android:layout_marginTop="10dp" />
 
+        <!-- Type Spinner -->
         <Spinner
             android:id="@+id/spinnerType"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" />
 
+        <!-- Max Slots -->
         <EditText
             android:id="@+id/internSlots"
             android:hint="Max Slots"
             android:inputType="number"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" />
 
+        <!-- Submit -->
         <Button
             android:id="@+id/btnSubmit"
             android:text="Add Internship"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="25dp" />
+
     </LinearLayout>
 </ScrollView>
