@@ -119,6 +119,7 @@
                 android:id="@+id/btnSubmit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/medium_gold"
                 android:text="Sign Up" />
 
             <!-- TOGGLE TEXT -->
