@@ -131,8 +131,12 @@ public class AddInternshipActivity extends AppCompatActivity {
         } else {
             if(imageFileName.isEmpty())
                 submitData("ic_image.jpg"); // just pass placeholder name
-            else
+            else {
+                if (imageFileName.startsWith(BASE_URL + "uploads/")) {
+                    imageFileName = imageFileName.replace(BASE_URL + "uploads/", "");
+                }
                 submitData(imageFileName);
+            }
         }
     }
 
