@@ -50,6 +50,13 @@ public class MainActivity extends AppCompatActivity {
         initViews();
         setupSpinner();
         loadSavedLogin();
+        if(!prefs.getString("email", "").isEmpty()) {
+            isSignup = false;
+            findViewById(R.id.signupLayout).setVisibility(View.GONE);
+            findViewById(R.id.loginLayout).setVisibility(View.VISIBLE);
+            btnSubmit.setText("Login");
+            tvToggle.setText("Don't have an account? Sign Up");
+        }
         toggleMode();
         submitListener();
         spinnerSignup.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -135,12 +142,14 @@ public class MainActivity extends AppCompatActivity {
     void loadSavedLogin() {
         etEmailLogin.setText(prefs.getString("email", ""));
         etPasswordLogin.setText(prefs.getString("password", ""));
+        spinnerLogin.setSelection(prefs.getString("type", "User").equals("User") ? 0 : 1);
     }
 
-    void saveLogin(String email, String password) {
+    void saveLogin(String email, String password, String type) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("email", email);
         editor.putString("password", password);
+        editor.putString("type", type);
         editor.apply();
     }
 
@@ -220,7 +229,10 @@ public class MainActivity extends AppCompatActivity {
                                 );
 
                                 Toast.makeText(MainActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
-
+                                btnSubmit.setEnabled(true);
+                                tvToggle.setEnabled(true);
+                                if (rememberSignup.isChecked())
+                                    saveLogin(emailv, passv, typev);
                                 Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                                 intent.putExtra("type", "User");
                                 intent.putExtra("user", user); // Serializable object
@@ -248,15 +260,16 @@ public class MainActivity extends AppCompatActivity {
                                 }
 
                                 Toast.makeText(MainActivity.this, "Company signup successful", Toast.LENGTH_SHORT).show();
-
+                                btnSubmit.setEnabled(true);
+                                tvToggle.setEnabled(true);
+                                if (rememberSignup.isChecked())
+                                    saveLogin(emailv, passv, typev);
                                 Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                                 intent.putExtra("type", "Company");
                                 intent.putExtra("company", company);
                                 startActivity(intent);
                                 finish();
                             }
-                            btnSubmit.setEnabled(true);
-                            tvToggle.setEnabled(true);
                         } else if (obj.getString("status").equals("email_exists")) {
                             Toast.makeText(MainActivity.this,
                                     "Email already registered. Try another one.",
@@ -348,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
                                     );
 
                                     if (rememberLogin.isChecked()) {
-                                        saveLogin(etEmailLogin.getText().toString(), etPasswordLogin.getText().toString());
+                                        saveLogin(etEmailLogin.getText().toString(), etPasswordLogin.getText().toString(), "User");
                                     }
 
                                     Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
@@ -374,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
                                     );
 
                                     if (rememberLogin.isChecked()) {
-                                        saveLogin(etEmailLogin.getText().toString(), etPasswordLogin.getText().toString());
+                                        saveLogin(etEmailLogin.getText().toString(), etPasswordLogin.getText().toString(), "Company");
                                     }
 
                                     Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
