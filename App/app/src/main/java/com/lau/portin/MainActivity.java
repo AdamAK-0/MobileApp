@@ -217,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
 
                                 Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                intent.putExtra("type", "User");
                                 intent.putExtra("user", user); // Serializable object
                                 startActivity(intent);
                                 finish();
@@ -244,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this, "Company signup successful", Toast.LENGTH_SHORT).show();
 
                                 Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                intent.putExtra("type", "Company");
                                 intent.putExtra("company", company);
                                 startActivity(intent);
                                 finish();
