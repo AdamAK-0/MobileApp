@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 
 import org.json.JSONObject;
 
@@ -31,6 +32,8 @@ public class AddInternshipActivity extends AppCompatActivity {
     ImageView imgPreview;
 
     Bitmap selectedBitmap = null;
+    boolean editMode = false;
+
 
     public static final String BASE_URL = "http://10.0.2.2/portin/";
 
@@ -53,7 +56,30 @@ public class AddInternshipActivity extends AppCompatActivity {
         setupSpinner();
         btnSelectImage.setOnClickListener(v -> pickImage());
         btnSubmit.setOnClickListener(v -> validateAndSubmit());
+        editMode = getIntent().getBooleanExtra("edit_mode", false);
+        Internship internship = getIntent().getParcelableExtra("internship");
+
+        if (editMode && internship != null) {
+            name.setText(internship.getName());
+            desc.setText(internship.getDescription());
+            //rating.setText(String.valueOf(internship.getRating()));
+            //start.setText(internship.getStartDate());
+            //end.setText(internship.getEndDate());
+            //slots.setText(String.valueOf(internship.getMaxSlots()));
+            type.setSelection(getSpinnerIndex(type, internship.getType()));
+            Glide.with(this).load(internship.getPhoto()).into(imgPreview);
+        }
+
     }
+    private int getSpinnerIndex(Spinner spinner, String value) {
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(value)) {
+                return i;
+            }
+        }
+        return 0; // default to first item if not found
+    }
+
 
     void setupSpinner() {
         String[] items = {"remote", "in-person", "hybrid"};
@@ -122,6 +148,7 @@ public class AddInternshipActivity extends AppCompatActivity {
 
     void submitData(String imageFileName) {
         String url = BASE_URL + "post_internship.php";
+        if(editMode) url = BASE_URL + "edit_internship.php";
 
         StringRequest req = new StringRequest(Request.Method.POST, url,
                 response -> {
