@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.*;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +34,9 @@ public class AddInternshipActivity extends AppCompatActivity {
 
     Bitmap selectedBitmap = null;
     boolean editMode = false;
+    String imageFileName = "";
+    Internship internship;
+
 
 
     public static final String BASE_URL = "http://10.0.2.2/portin/";
@@ -57,7 +61,9 @@ public class AddInternshipActivity extends AppCompatActivity {
         btnSelectImage.setOnClickListener(v -> pickImage());
         btnSubmit.setOnClickListener(v -> validateAndSubmit());
         editMode = getIntent().getBooleanExtra("edit_mode", false);
-        Internship internship = getIntent().getParcelableExtra("internship");
+        internship =(Internship) getIntent().getSerializableExtra("internship");
+        Log.d("editMode", String.valueOf(editMode));
+
 
         if (editMode && internship != null) {
             name.setText(internship.getName());
@@ -68,6 +74,8 @@ public class AddInternshipActivity extends AppCompatActivity {
             //slots.setText(String.valueOf(internship.getMaxSlots()));
             type.setSelection(getSpinnerIndex(type, internship.getType()));
             Glide.with(this).load(internship.getPhoto()).into(imgPreview);
+            btnSubmit.setText("Update Internship");
+            imageFileName = internship.getPhoto();
         }
 
     }
@@ -116,13 +124,18 @@ public class AddInternshipActivity extends AppCompatActivity {
             desc.setError("Required");
             return;
         }
-        if (selectedBitmap == null) {
-            Toast.makeText(this, "Select an image", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
-        uploadImage();
+        // if bitmap is selected, upload it; otherwise, use placeholder filename
+        if (selectedBitmap != null) {
+            uploadImage();
+        } else {
+            if(imageFileName.isEmpty())
+                submitData("ic_image.jpg"); // just pass placeholder name
+            else
+                submitData(imageFileName);
+        }
     }
+
 
     void uploadImage() {
         String url = BASE_URL + "upload_image.php";
@@ -172,7 +185,8 @@ public class AddInternshipActivity extends AppCompatActivity {
                 map.put("type", type.getSelectedItem().toString());
                 map.put("max_slots", slots.getText().toString());
                 map.put("photo", imageFileName);
-
+                if(editMode && internship != null)
+                    map.put("internship_id", String.valueOf(internship.getId()));
                 return map;
             }
         };
