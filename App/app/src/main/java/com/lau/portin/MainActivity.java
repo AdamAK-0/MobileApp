@@ -154,10 +154,15 @@ public class MainActivity extends AppCompatActivity {
         String confirmv = etConfirmSignup.getText().toString().trim();
         String typev = spinnerSignup.getSelectedItem().toString();
 
+
         // Validation
         if (namev.isEmpty() || emailv.isEmpty() || passv.isEmpty() || confirmv.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
+        }
+        if (!isValidEmail(emailv)) {
+            Toast.makeText(this, "Invalid email format", Toast.LENGTH_SHORT).show();
+            return; // stop submit
         }
 
         if (!passv.equals(confirmv)) {
@@ -250,17 +255,34 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 finish();
                             }
-
-                        } else {
+                            btnSubmit.setEnabled(true);
+                            tvToggle.setEnabled(true);
+                        } else if (obj.getString("status").equals("email_exists")) {
+                            Toast.makeText(MainActivity.this,
+                                    "Email already registered. Try another one.",
+                                    Toast.LENGTH_SHORT).show();
+                            btnSubmit.setEnabled(true);
+                            tvToggle.setEnabled(true);
+                        }
+                        else {
                             Toast.makeText(MainActivity.this,
                                     "Signup failed: " + obj.getString("error"),
                                     Toast.LENGTH_SHORT).show();
+                            btnSubmit.setEnabled(true);
+                            tvToggle.setEnabled(true);
                         }
+
                     } catch (Exception e) {
+                        btnSubmit.setEnabled(true);
+                        tvToggle.setEnabled(true);
                         e.printStackTrace();
                     }
                 },
-                error -> Toast.makeText(MainActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show()
+                error -> {
+                    Toast.makeText(MainActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    btnSubmit.setEnabled(true);
+                    tvToggle.setEnabled(true);
+                }
         ) {
             @Override
             protected Map<String, String> getParams() {
@@ -284,8 +306,6 @@ public class MainActivity extends AppCompatActivity {
         };
 
         Volley.newRequestQueue(this).add(request);
-        btnSubmit.setEnabled(true);
-        tvToggle.setEnabled(true);
     }
 
         void authenticateUser() {
@@ -293,6 +313,13 @@ public class MainActivity extends AppCompatActivity {
             String urlCompany = BASE_URL + "authenticate_company.php";
 
             String selected = spinnerLogin.getSelectedItem().toString();
+            String email = etEmailLogin.getText().toString().trim();
+
+            if (!isValidEmail(email)) {
+                Toast.makeText(this, "Invalid email format", Toast.LENGTH_SHORT).show();
+                return; // stop submit
+            }
+
             btnSubmit.setEnabled(false);
             tvToggle.setEnabled(false);
             StringRequest req = new StringRequest(Request.Method.POST,
@@ -325,7 +352,6 @@ public class MainActivity extends AppCompatActivity {
                                     }
 
                                     Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-
                                     Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                                     intent.putExtra("type", "User");
                                     intent.putExtra("user", user);
@@ -352,26 +378,37 @@ public class MainActivity extends AppCompatActivity {
                                     }
 
                                     Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-
                                     Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                                     intent.putExtra("type", "Company");
                                     intent.putExtra("company", company);
                                     startActivity(intent);
                                     finish();
                                 }
+                                btnSubmit.setEnabled(true);
+                                tvToggle.setEnabled(true);
 
                             } else if (status.equals("wrong_password")) {
+                                btnSubmit.setEnabled(true);
+                                tvToggle.setEnabled(true);
                                 Toast.makeText(MainActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
 
                             } else if (status.equals("not_found")) {
+                                btnSubmit.setEnabled(true);
+                                tvToggle.setEnabled(true);
                                 Toast.makeText(MainActivity.this, "User not found", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (JSONException e) {
+                            btnSubmit.setEnabled(true);
+                            tvToggle.setEnabled(true);
                             e.printStackTrace();
                         }
                     },
-                    error -> Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show()
+                    error -> {
+                        Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                        btnSubmit.setEnabled(true);
+                        tvToggle.setEnabled(true);
+                    }
             ) {
                 @Override
                 protected Map<String, String> getParams() {
@@ -383,7 +420,9 @@ public class MainActivity extends AppCompatActivity {
             };
 
             Volley.newRequestQueue(this).add(req);
-            btnSubmit.setEnabled(true);
-            tvToggle.setEnabled(true);
         }
+    private boolean isValidEmail(String email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
 }

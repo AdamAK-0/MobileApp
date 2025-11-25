@@ -8,6 +8,13 @@ $birth   = $_POST['birth_year'];
 $email   = $_POST['email'];
 $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
+// Check if email exists
+$check = mysqli_query($con, "SELECT email FROM users WHERE email='$email'");
+if (mysqli_num_rows($check) > 0) {
+    echo json_encode(["status" => "email_exists"]);
+    exit();
+}
+
 $query = "INSERT INTO users (first_name, middle_name, last_name, birth_year, email, password)
           VALUES ('$first', '$middle', '$last', '$birth', '$email', '$password')";
 
