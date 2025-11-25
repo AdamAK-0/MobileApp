@@ -146,6 +146,9 @@ public class MainActivity extends AppCompatActivity {
 
     void registerUser() {
         String namev = etName.getText().toString().trim();
+        String middle = etMiddle.getText().toString().trim();
+        String last = etLast.getText().toString().trim();
+        String birth = etBirth.getText().toString().trim();
         String emailv = etEmailSignup.getText().toString().trim();
         String passv = etPasswordSignup.getText().toString().trim();
         String confirmv = etConfirmSignup.getText().toString().trim();
@@ -183,24 +186,73 @@ public class MainActivity extends AppCompatActivity {
         }
 
         String url = typev.equals("User") ? BASE_URL + "add_user.php" : BASE_URL + "add_company.php";
+
         btnSubmit.setEnabled(false);
         tvToggle.setEnabled(false);
+
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 response -> {
                     try {
                         JSONObject obj = new JSONObject(response);
+
                         if (obj.getString("status").equals("success")) {
-                            int userId = obj.getInt("user_id");
 
-                            Toast.makeText(MainActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
+                            if (typev.equals("User")) {
 
-                            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                            intent.putExtra("user_id", userId);
-                            intent.putExtra("first_name", namev);
-                            startActivity(intent);
-                            finish();
+                                JSONObject u = obj.getJSONObject("user");
+
+                                User user = new User(
+                                        u.getInt("user_id"),
+                                        u.getString("first_name"),
+                                        u.optString("middle_name", ""),
+                                        u.optString("last_name", ""),
+                                        u.getInt("birth_year"),
+                                        u.getString("email"),
+                                        u.getString("password"),
+                                        u.optString("photo", ""),
+                                        u.optString("transcript", ""),
+                                        u.getString("created_at")
+                                );
+
+                                Toast.makeText(MainActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
+
+                                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                intent.putExtra("user", user); // Serializable object
+                                startActivity(intent);
+                                finish();
+
+                            } else {
+                                // Company signup
+                                JSONObject c = obj.getJSONObject("company");
+
+                                Company company = new Company(
+                                        c.getInt("company_id"),
+                                        c.getString("name"),
+                                        c.getString("email"),
+                                        c.getString("password"),
+                                        c.optString("photo", ""),
+                                        c.optString("rating") != null ? (float) c.getDouble("rating") : 0f,
+                                        c.optString("description", ""),
+                                        c.getString("created_at")
+                                );
+
+                                // Clean photo if it contains http://10.0.2.2/portin/uploads/
+                                if (company.getPhoto() != null && company.getPhoto().contains("http://10.0.2.2/portin/uploads/")) {
+                                    company.setPhoto(company.getPhoto().replace("http://10.0.2.2/portin/uploads/", ""));
+                                }
+
+                                Toast.makeText(MainActivity.this, "Company signup successful", Toast.LENGTH_SHORT).show();
+
+                                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                intent.putExtra("company", company);
+                                startActivity(intent);
+                                finish();
+                            }
+
                         } else {
-                            Toast.makeText(MainActivity.this, "Signup failed: " + obj.getString("error"), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this,
+                                    "Signup failed: " + obj.getString("error"),
+                                    Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -211,14 +263,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
+
                 params.put("email", emailv);
                 params.put("password", passv);
 
                 if (typev.equals("User")) {
                     params.put("first_name", namev);
-                    params.put("middle_name", "0");
-                    params.put("last_name", "0");
-                    params.put("birth_year", "2000");
+                    params.put("middle_name", middle);
+                    params.put("last_name", last);
+                    params.put("birth_year", birth);
                 } else {
                     params.put("name", namev);
                     params.put("description", "None");
@@ -233,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
         tvToggle.setEnabled(true);
     }
 
-    void authenticateUser() {
+        void authenticateUser() {
         String urlUser = BASE_URL + "authenticate_user.php";
         String urlCompany = BASE_URL + "authenticate_company.php";
 
