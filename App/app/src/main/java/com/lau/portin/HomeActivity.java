@@ -19,6 +19,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -43,6 +45,8 @@ public class HomeActivity extends AppCompatActivity {
 
         fab.setOnClickListener(v -> {
             Intent i = new Intent(HomeActivity.this, AddInternshipActivity.class);
+            i.putExtra("type", type);
+            i.putExtra("company", (Company) getIntent().getSerializableExtra("company"));
             startActivity(i);
         });
 
@@ -64,10 +68,27 @@ public class HomeActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
 
         // load data
-        loadInternships();
+        if (type.equals("Company")) {
+            Company company = (Company) intent.getSerializableExtra("company");
+            if (company != null) {
+                loadCompanyInternships(company.getCompany_id());
+            }
+        } else {
+            loadInternships();
+        }
 
         // pull to refresh
-        swipeRefreshLayout.setOnRefreshListener(this::loadInternships);
+        if(type.equals("Company")) {
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                Company company = (Company) intent.getSerializableExtra("company");
+                if (company != null) {
+                    loadCompanyInternships(company.getCompany_id());
+                }
+            });
+        }
+        else {
+            swipeRefreshLayout.setOnRefreshListener(this::loadInternships);
+        }
 
         // search filter
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -125,4 +146,53 @@ public class HomeActivity extends AppCompatActivity {
 
         Volley.newRequestQueue(this).add(req);
     }
+    void loadCompanyInternships(int companyId) {
+        swipeRefreshLayout.setRefreshing(true);
+
+        String url = BASE_URL + "get_company_internships.php";
+
+        StringRequest req = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    try {
+                        JSONArray arr = new JSONArray(response);
+                        list.clear();
+
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject o = arr.getJSONObject(i);
+
+                            list.add(new Internship(
+                                    o.getInt("internship_id"),
+                                    o.getString("company_id"),
+                                    o.getString("name"),
+                                    o.getString("description"),
+                                    o.getString("type"),
+                                    BASE_URL + "uploads/" + o.getString("photo")
+                            ));
+                        }
+
+                        adapter = new InternshipAdapter(list, type);
+                        rv.setAdapter(adapter);
+
+                    } catch (Exception e) {
+                        Toast.makeText(this, "JSON error", Toast.LENGTH_SHORT).show();
+                    }
+
+                    swipeRefreshLayout.setRefreshing(false);
+                },
+                error -> {
+                    Toast.makeText(this, "Network error", Toast.LENGTH_SHORT).show();
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> map = new HashMap<>();
+                map.put("company_id", String.valueOf(companyId));
+                return map;
+            }
+        };
+
+        Volley.newRequestQueue(this).add(req);
+    }
+
 }
