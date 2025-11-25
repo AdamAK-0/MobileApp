@@ -37,7 +37,7 @@ public class AddInternshipActivity extends AppCompatActivity {
     String imageFileName = "";
     Internship internship;
 
-
+    Company c;
 
     public static final String BASE_URL = "http://10.0.2.2/portin/";
 
@@ -62,8 +62,13 @@ public class AddInternshipActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(v -> validateAndSubmit());
         editMode = getIntent().getBooleanExtra("edit_mode", false);
         internship =(Internship) getIntent().getSerializableExtra("internship");
+
         Log.d("editMode", String.valueOf(editMode));
 
+        Intent intent = getIntent();
+        if (intent != null) {
+            c = (Company) intent.getSerializableExtra("company");
+        }
 
         if (editMode && internship != null) {
             name.setText(internship.getName());
@@ -180,7 +185,7 @@ public class AddInternshipActivity extends AppCompatActivity {
             protected java.util.Map<String, String> getParams() {
                 java.util.Map<String, String> map = new java.util.HashMap<>();
 
-                map.put("company_id", "1"); // temporary
+                map.put("company_id", String.valueOf(c.getCompany_id())); // temporary
                 map.put("name", name.getText().toString());
                 map.put("description", desc.getText().toString());
                 map.put("rating", rating.getText().toString());
