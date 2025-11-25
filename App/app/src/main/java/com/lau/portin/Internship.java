@@ -1,6 +1,8 @@
 package com.lau.portin;
 
-public class Internship {
+import java.io.Serializable;
+
+public class Internship implements Serializable {
     public int id;
     public String companyName;
     public String name;
