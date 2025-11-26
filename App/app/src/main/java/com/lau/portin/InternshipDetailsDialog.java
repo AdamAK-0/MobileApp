@@ -28,11 +28,14 @@ public class InternshipDetailsDialog extends DialogFragment {
     private Internship internship;
     private User currentUser;
     private String type;
+    private InternshipAdapter.ViewHolder h;
 
-    public InternshipDetailsDialog(Internship internship, User currentUser, String type) {
+
+    public InternshipDetailsDialog(Internship internship, User currentUser, String type, InternshipAdapter.ViewHolder h) {
         this.internship = internship;
         this.currentUser = currentUser;
         this.type = type;
+        this.h = h;
     }
 
     @Override
@@ -52,6 +55,9 @@ public class InternshipDetailsDialog extends DialogFragment {
         company.setText(internship.getCompanyName());
         typeTv.setText(internship.getType());
         desc.setText(internship.getDescription());
+        apply.setEnabled(false);
+        apply.setText("Checking...");
+        loadApplicationStatus(internship.getId(), currentUser.getUser_id(), h, apply);
 
         if (!"User".equals(type)) {
             apply.setVisibility(View.GONE);
@@ -95,7 +101,58 @@ public class InternshipDetailsDialog extends DialogFragment {
         };
         Volley.newRequestQueue(getContext()).add(req);
     }
-    /*private void applyToInternship(int internshipId, int userId, InternshipAdapter.ViewHolder h) {
+    private void loadApplicationStatus(int internshipId, int userId, InternshipAdapter.ViewHolder h, Button apply) {
+        String url = AddInternshipActivity.BASE_URL + "check_application_status.php";
+
+        StringRequest req = new StringRequest(
+                Request.Method.POST,
+                url,
+                response -> {
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                        boolean applied = obj.optBoolean("applied", false);
+
+                        if (applied) {
+                            String statusCode = obj.optString("status", "applied");
+                            h.btnApply.setEnabled(false);
+                            apply.setEnabled(false);
+                            h.btnApply.setText(prettifyStatusShort(statusCode));
+                            apply.setText(prettifyStatusShort(statusCode));
+
+                            if (h.tvApplicationStatus != null) {
+                                h.tvApplicationStatus.setVisibility(View.VISIBLE);
+                                h.tvApplicationStatus.setText("Status: " + prettifyStatus(statusCode));
+                            }
+                        } else {
+                            // Not applied yet
+                            h.btnApply.setEnabled(true);
+                            apply.setEnabled(true);
+                            h.btnApply.setText("Apply");
+                            apply.setText("Apply");
+                            if (h.tvApplicationStatus != null) {
+                                h.tvApplicationStatus.setVisibility(View.GONE);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        // Ignore parse errors in UI
+                    }
+                },
+                error -> {
+                    // In case of network error, leave current UI state
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> map = new HashMap<>();
+                map.put("user_id", String.valueOf(userId));
+                map.put("internship_id", String.valueOf(internshipId));
+                return map;
+            }
+        };
+
+        Volley.newRequestQueue(h.itemView.getContext()).add(req);
+    }
+    /*private void applyToInternship(int internshipId, int userId, InternshipAdapter.ViewHolder h, Button btnApply) {
         String url = AddInternshipActivity.BASE_URL + "apply_to_internship.php";
 
         StringRequest req = new StringRequest(
@@ -164,4 +221,38 @@ public class InternshipDetailsDialog extends DialogFragment {
 
         Volley.newRequestQueue(h.itemView.getContext()).add(req);
     }*/
+    private String prettifyStatus(String statusCode) {
+        if (statusCode == null) return "Applied";
+        switch (statusCode) {
+            case "in_review":
+                return "In review";
+            case "accepted":
+                return "Accepted";
+            case "rejected":
+                return "Rejected";
+            case "withdrawn":
+                return "Withdrawn";
+            case "applied":
+            default:
+                return "Applied";
+        }
+    }
+
+    private String prettifyStatusShort(String statusCode) {
+        // Short label for the button text
+        if (statusCode == null) return "Applied";
+        switch (statusCode) {
+            case "in_review":
+                return "In review";
+            case "accepted":
+                return "Accepted";
+            case "rejected":
+                return "Rejected";
+            case "withdrawn":
+                return "Withdrawn";
+            case "applied":
+            default:
+                return "Applied";
+        }
+    }
 }

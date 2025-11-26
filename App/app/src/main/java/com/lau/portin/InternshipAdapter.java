@@ -143,6 +143,8 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
 
         // Always refresh current application status for this user (if logged in)
         if ("User".equals(type) && currentUser != null) {
+            h.btnApply.setEnabled(false);
+            h.btnApply.setText("Checking...");
             loadApplicationStatus(i.getId(), currentUser.getUser_id(), h);
         }
 
@@ -155,7 +157,7 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
         } else {
             // For regular users, show the internship details dialog
             h.itemView.setOnClickListener(v -> {
-                InternshipDetailsDialog dialog = new InternshipDetailsDialog(i, currentUser, type);
+                InternshipDetailsDialog dialog = new InternshipDetailsDialog(i, currentUser, type, h);
                 dialog.show(((FragmentActivity) h.itemView.getContext()).getSupportFragmentManager(), "internship_dialog");
             });
         }
