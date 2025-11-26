@@ -21,6 +21,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,7 +32,9 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText etName, etMiddle, etLast, etEmailSignup, etPasswordSignup, etConfirmSignup, etBirth;
+    private TextInputLayout tilName;
+    private TextInputEditText etName;
+    EditText etMiddle, etLast, etEmailSignup, etPasswordSignup, etConfirmSignup, etBirth;
     EditText etEmailLogin, etPasswordLogin;
     Spinner spinnerSignup, spinnerLogin;
     CheckBox rememberSignup, rememberLogin;
@@ -69,12 +73,12 @@ public class MainActivity extends AppCompatActivity {
                     etLast.setVisibility(View.VISIBLE);
                     etMiddle.setVisibility(View.VISIBLE);
                     etBirth.setVisibility(View.VISIBLE);
-                    etName.setHint("First Name");
+                    tilName.setHint("First Name");
                 } else {
                     etLast.setVisibility(View.GONE);
                     etMiddle.setVisibility(View.GONE);
                     etBirth.setVisibility(View.GONE);
-                    etName.setHint("Company Name");
+                    tilName.setHint("Company Name");
                 }
             }
 
@@ -87,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
     void initViews() {
         etName = findViewById(R.id.etName);
+        tilName = findViewById(R.id.tilName);
         etMiddle = findViewById(R.id.etMiddle);
         etLast = findViewById(R.id.etLast);
         etBirth = findViewById(R.id.etBirth);
