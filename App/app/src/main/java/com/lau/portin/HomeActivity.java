@@ -30,6 +30,7 @@ public class HomeActivity extends AppCompatActivity {
     SwipeRefreshLayout swipeRefreshLayout;
     SearchView searchBar;
     String type;
+    User currentUser;
     public static final String BASE_URL = "http://10.0.2.2/portin/";
 
     @Override
@@ -60,11 +61,15 @@ public class HomeActivity extends AppCompatActivity {
                 else {
                     fab.setVisibility(View.GONE);
                 }
+
+                if (type.equals("User")) {
+                    currentUser = (User) intent.getSerializableExtra("user");
+                }
             }
         }
         // recycler setup
         rv.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new InternshipAdapter(list, type);
+        adapter = new InternshipAdapter(list, type, currentUser);
         rv.setAdapter(adapter);
 
         // load data
@@ -131,7 +136,7 @@ public class HomeActivity extends AppCompatActivity {
                             ));
                         }
 
-                        adapter = new InternshipAdapter(list, type);
+                        adapter = new InternshipAdapter(list, type, currentUser);
                         rv.setAdapter(adapter);
 
                     } catch (Exception e) {
@@ -172,7 +177,7 @@ public class HomeActivity extends AppCompatActivity {
                             ));
                         }
 
-                        adapter = new InternshipAdapter(list, type);
+                        adapter = new InternshipAdapter(list, type, currentUser);
                         rv.setAdapter(adapter);
 
                     } catch (Exception e) {
