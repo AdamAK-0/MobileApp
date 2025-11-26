@@ -10,7 +10,7 @@ public class Internship implements Serializable {
     public String type;
     public String photo;
 
-    public Internship(int id, String companyName, String name, String description, String type, String photo) {
+    public Internship(int id, int company_id, String companyName, String name, String description, String type, String photo) {
         this.id = id;
         this.companyName = companyName;
         this.name = name;

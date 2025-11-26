@@ -36,7 +36,7 @@
             android:contentDescription="Add Internship"
             android:src="@drawable/ic_add"
             app:tint="@android:color/white"
-            app:backgroundTint="@color/purple_500"
+            app:backgroundTint="@color/medium_gold"
             android:layout_gravity="bottom|end" />
 
     </FrameLayout>

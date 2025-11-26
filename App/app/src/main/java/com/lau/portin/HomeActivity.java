@@ -122,7 +122,8 @@ public class HomeActivity extends AppCompatActivity {
 
                             list.add(new Internship(
                                     o.getInt("internship_id"),
-                                    o.getString("company_id"),
+                                    o.getInt("company_id"),
+                                    o.getString("company_name"),
                                     o.getString("name"),
                                     o.getString("description"),
                                     o.getString("type"),
@@ -162,7 +163,8 @@ public class HomeActivity extends AppCompatActivity {
 
                             list.add(new Internship(
                                     o.getInt("internship_id"),
-                                    o.getString("company_id"),
+                                    o.getInt("company_id"),
+                                    o.getString("company_name"),
                                     o.getString("name"),
                                     o.getString("description"),
                                     o.getString("type"),
