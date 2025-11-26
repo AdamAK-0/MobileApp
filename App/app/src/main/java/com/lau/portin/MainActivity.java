@@ -167,25 +167,47 @@ public class MainActivity extends AppCompatActivity {
 
         // Validation
         if (namev.isEmpty() || emailv.isEmpty() || passv.isEmpty() || confirmv.isEmpty()) {
+            if(namev.isEmpty()) {
+                etName.setError("Name required");
+
+            }
+            if(emailv.isEmpty()) {
+                etEmailSignup.setError("Email required");
+            }
+            if(passv.isEmpty()) {
+                etPasswordSignup.setError("Password required");
+            }
+            if(confirmv.isEmpty()) {
+                etConfirmSignup.setError("Confirm password required");
+            }
+            if(birth.isEmpty() && typev.equals("User")) {
+                etBirth.setError("Birth year required");
+            }
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(birth.isEmpty() && typev.equals("User")) {
+            etBirth.setError("Birth year required");
             return;
         }
         if (!isValidEmail(emailv)) {
             Toast.makeText(this, "Invalid email format", Toast.LENGTH_SHORT).show();
             return; // stop submit
         }
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        if(!birth.isEmpty() && typev.equals("User")) {
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 
-        // LOWER BOUND (reasonable)
-        if (Integer.parseInt(birth) < currentYear - 100) {
-            etBirth.setError("Birth year too old");
-            return;
-        }
+            // LOWER BOUND (reasonable)
+            if (Integer.parseInt(birth) < currentYear - 100) {
+                etBirth.setError("Birth year too old");
+                return;
+            }
 
-        // UPPER BOUND (not in the future)
-        if (Integer.parseInt(birth) > currentYear) {
-            etBirth.setError("Birth year cannot be in the future");
-            return;
+            // UPPER BOUND (not in the future)
+            if (Integer.parseInt(birth) > currentYear) {
+                etBirth.setError("Birth year cannot be in the future");
+                return;
+            }
         }
         if (!passv.equals(confirmv)) {
             Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
