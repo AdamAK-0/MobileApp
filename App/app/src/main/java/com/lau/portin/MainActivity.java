@@ -2,6 +2,7 @@ package com.lau.portin;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.AdapterView;
@@ -173,7 +174,19 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Invalid email format", Toast.LENGTH_SHORT).show();
             return; // stop submit
         }
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 
+        // LOWER BOUND (reasonable)
+        if (Integer.parseInt(birth) < currentYear - 100) {
+            etBirth.setError("Birth year too old");
+            return;
+        }
+
+        // UPPER BOUND (not in the future)
+        if (Integer.parseInt(birth) > currentYear) {
+            etBirth.setError("Birth year cannot be in the future");
+            return;
+        }
         if (!passv.equals(confirmv)) {
             Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
             return;
