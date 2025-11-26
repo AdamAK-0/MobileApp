@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
@@ -145,7 +146,6 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
             loadApplicationStatus(i.getId(), currentUser.getUser_id(), h);
         }
 
-        // If this is a company view, clicking the card opens applications list
         if ("Company".equals(type)) {
             h.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(h.itemView.getContext(), CompanyApplicationsActivity.class);
@@ -153,7 +153,11 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
                 h.itemView.getContext().startActivity(intent);
             });
         } else {
-            h.itemView.setOnClickListener(null);
+            // For regular users, show the internship details dialog
+            h.itemView.setOnClickListener(v -> {
+                InternshipDetailsDialog dialog = new InternshipDetailsDialog(i, currentUser, type);
+                dialog.show(((FragmentActivity) h.itemView.getContext()).getSupportFragmentManager(), "internship_dialog");
+            });
         }
     }
 
