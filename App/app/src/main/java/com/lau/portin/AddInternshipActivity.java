@@ -67,23 +67,21 @@ public class AddInternshipActivity extends AppCompatActivity {
         end.setOnClickListener(v -> showDatePicker(end));
         btnSelectImage.setOnClickListener(v -> pickImage());
         btnSubmit.setOnClickListener(v -> validateAndSubmit());
-        editMode = getIntent().getBooleanExtra("edit_mode", false);
-        internship =(Internship) getIntent().getSerializableExtra("internship");
+        Intent intent = getIntent();
+        editMode = intent.getBooleanExtra("edit_mode", false);
+        internship =(Internship) intent.getSerializableExtra("internship");
 
         Log.d("editMode", String.valueOf(editMode));
 
-        Intent intent = getIntent();
-        if (intent != null) {
-            c = (Company) intent.getSerializableExtra("company");
-        }
+        c = (Company) intent.getSerializableExtra("company");
 
         if (editMode && internship != null) {
             name.setText(internship.getName());
             desc.setText(internship.getDescription());
             //rating.setText(String.valueOf(internship.getRating()));
-            //start.setText(internship.getStartDate());
-            //end.setText(internship.getEndDate());
-            //slots.setText(String.valueOf(internship.getMaxSlots()));
+            start.setText(internship.getStartDate());
+            end.setText(internship.getEndDate());
+            slots.setText(String.valueOf(internship.getMaxSlots()));
             type.setSelection(getSpinnerIndex(type, internship.getType()));
             Glide.with(this).load(internship.getPhoto()).into(imgPreview);
             btnSubmit.setText("Update Internship");
@@ -259,7 +257,10 @@ public class AddInternshipActivity extends AppCompatActivity {
         StringRequest req = new StringRequest(Request.Method.POST, url,
                 response -> {
                     if (response.contains("success")) {
-                        Toast.makeText(this, "Internship Added", Toast.LENGTH_SHORT).show();
+                        if(editMode)
+                            Toast.makeText(this, "Internship Updated", Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(this, "Internship Added", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                     else
