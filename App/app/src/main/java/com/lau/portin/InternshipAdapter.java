@@ -57,6 +57,11 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
         }
         notifyDataSetChanged();
     }
+    public void updateList(ArrayList<Internship> newList) {
+        this.list = newList;
+        notifyDataSetChanged();
+    }
+
 
     // Legacy constructor (not used in HomeActivity, but kept for compatibility)
     public InternshipAdapter(List<Internship> list) {
@@ -140,12 +145,11 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
                 applyToInternship(i.getId(), currentUser.getUser_id(), h);
             });
         }
-
         // Always refresh current application status for this user (if logged in)
         if ("User".equals(type) && currentUser != null) {
             h.btnApply.setEnabled(false);
             h.btnApply.setText("Checking...");
-            loadApplicationStatus(i.getId(), currentUser.getUser_id(), h);
+            loadApplicationStatus(i, i.getId(), currentUser.getUser_id(), h);
         }
 
         if ("Company".equals(type)) {
@@ -161,10 +165,11 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
                 dialog.show(((FragmentActivity) h.itemView.getContext()).getSupportFragmentManager(), "internship_dialog");
             });
         }
+        h.btnApply.setVisibility(View.GONE);
     }
 
 
-    private void loadApplicationStatus(int internshipId, int userId, ViewHolder h) {
+    private void loadApplicationStatus(Internship i, int internshipId, int userId, ViewHolder h) {
         String url = AddInternshipActivity.BASE_URL + "check_application_status.php";
 
         StringRequest req = new StringRequest(
@@ -174,20 +179,24 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
                     try {
                         JSONObject obj = new JSONObject(response);
                         boolean applied = obj.optBoolean("applied", false);
+                        i.setStatus("apply");
 
                         if (applied) {
                             String statusCode = obj.optString("status", "applied");
+                            i.setStatus("applied");
                             h.btnApply.setEnabled(false);
                             h.btnApply.setText(prettifyStatusShort(statusCode));
 
                             if (h.tvApplicationStatus != null) {
                                 h.tvApplicationStatus.setVisibility(View.VISIBLE);
                                 h.tvApplicationStatus.setText("Status: " + prettifyStatus(statusCode));
+                                i.setStatus(statusCode);
                             }
                         } else {
                             // Not applied yet
                             h.btnApply.setEnabled(true);
                             h.btnApply.setText("Apply");
+                            i.setStatus("apply");
                             if (h.tvApplicationStatus != null) {
                                 h.tvApplicationStatus.setVisibility(View.GONE);
                             }

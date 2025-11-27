@@ -49,12 +49,24 @@ public class InternshipDetailsDialog extends DialogFragment {
         TextView typeTv = v.findViewById(R.id.tvDialogType);
         TextView desc = v.findViewById(R.id.tvDialogDescription);
         Button apply = v.findViewById(R.id.btnDialogApply);
+        TextView rating = v.findViewById(R.id.tvDialogRating);
+        TextView dates = v.findViewById(R.id.tvDialogDates);
+        TextView slots = v.findViewById(R.id.tvDialogSlots);
+        TextView created = v.findViewById(R.id.tvDialogCreated);
 
         Glide.with(getContext()).load(internship.getPhoto()).placeholder(R.drawable.ic_image).into(img);
         name.setText(internship.getName());
         company.setText(internship.getCompanyName());
         typeTv.setText(internship.getType());
         desc.setText(internship.getDescription());
+        rating.setText("Rating: " + internship.getRating() + "/5");
+
+        dates.setText("Duration: " + internship.getStartDate() + " → " + internship.getEndDate());
+
+        slots.setText("Slots: " + internship.getSlots() + "/" + internship.getMaxSlots());
+
+        created.setText("Posted: " + internship.getCreatedAt());
+
         apply.setEnabled(false);
         apply.setText("Checking...");
         loadApplicationStatus(internship.getId(), currentUser.getUser_id(), h, apply);

@@ -3,6 +3,9 @@ package com.lau.portin;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +34,9 @@ public class HomeActivity extends AppCompatActivity {
     SearchView searchBar;
     String type;
     User currentUser;
+    AutoCompleteTextView filterStatus, filterMode;
+    String selectedStatus = "";
+    String selectedMode = "";
     public static final String BASE_URL = "http://10.0.2.2/portin/";
 
     @Override
@@ -41,6 +47,42 @@ public class HomeActivity extends AppCompatActivity {
         // views
         rv = findViewById(R.id.recyclerInternships);
         searchBar = findViewById(R.id.searchBar);
+        searchBar.setOnClickListener(v -> searchBar.setIconified(false));
+        filterStatus = findViewById(R.id.filterStatus);
+        filterMode = findViewById(R.id.filterMode);
+
+// Status options
+        String[] statuses = {"all", "apply", "applied", "accepted", "rejected", "in_review"};
+        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, statuses);
+        filterStatus.setAdapter(statusAdapter);
+
+// Mode options
+        String[] modes = {"all", "in-person", "remote", "hybrid"};
+        ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, modes);
+        filterMode.setAdapter(modeAdapter);
+
+// On select
+        filterStatus.setOnClickListener(v -> filterStatus.showDropDown());
+        filterMode.setOnClickListener(v -> filterMode.showDropDown());
+
+        filterStatus.setOnItemClickListener((parent, view, position, id) -> {
+            selectedStatus = statuses[position];
+            if (selectedStatus.equals("all")) {
+                selectedStatus = "";
+            }
+            applyFilters();
+        });
+
+        filterMode.setOnItemClickListener((parent, view, position, id) -> {
+            selectedMode = modes[position];
+            if (selectedMode.equals("all")) {
+                selectedMode = "";
+            }
+            applyFilters();
+        });
+
         swipeRefreshLayout = findViewById(R.id.swipeRefresh);
         FloatingActionButton fab = findViewById(R.id.btnAddInternship);
 
@@ -109,6 +151,23 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             }
         });
+        if(type.equals("Company")) {
+            filterStatus.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (type.equals("Company")) {
+            Company company = (Company) getIntent().getSerializableExtra("company");
+            if (company != null) {
+                loadCompanyInternships(company.getCompany_id());
+            }
+        }
+        else {
+            loadInternships();
+        }
     }
 
     void loadInternships() {
@@ -132,7 +191,12 @@ public class HomeActivity extends AppCompatActivity {
                                     o.getString("name"),
                                     o.getString("description"),
                                     o.getString("type"),
-                                    BASE_URL + "uploads/" + o.getString("photo")
+                                    BASE_URL + "uploads/" + o.getString("photo"),
+                                    o.getInt("rating"),
+                                    o.getString("start_date"),
+                                    o.getString("end_date"),
+                                    o.getInt("max_slots"),
+                                    o.getString("created_at")
                             ));
                         }
 
@@ -173,7 +237,12 @@ public class HomeActivity extends AppCompatActivity {
                                     o.getString("name"),
                                     o.getString("description"),
                                     o.getString("type"),
-                                    BASE_URL + "uploads/" + o.getString("photo")
+                                    BASE_URL + "uploads/" + o.getString("photo"),
+                                    o.getInt("rating"),
+                                    o.getString("start_date"),
+                                    o.getString("end_date"),
+                                    o.getInt("max_slots"),
+                                    o.getString("created_at")
                             ));
                         }
 
@@ -201,5 +270,28 @@ public class HomeActivity extends AppCompatActivity {
 
         Volley.newRequestQueue(this).add(req);
     }
+    void applyFilters() {
+        ArrayList<Internship> filtered = new ArrayList<>();
+
+        for (Internship i : list) {
+
+            boolean matchSearch = i.getName().toLowerCase().contains(searchBar.getQuery().toString().toLowerCase());
+
+            boolean matchStatus =
+                    selectedStatus.isEmpty() ||
+                            i.status.equals(selectedStatus);
+
+            boolean matchMode =
+                    selectedMode.isEmpty() ||
+                            i.type.equalsIgnoreCase(selectedMode);
+
+            if (matchSearch && matchStatus && matchMode) {
+                filtered.add(i);
+            }
+        }
+
+        adapter.updateList(filtered);
+    }
+
 
 }
