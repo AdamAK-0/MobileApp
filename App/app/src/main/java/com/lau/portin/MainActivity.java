@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,7 +33,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextInputLayout tilName;
+    private TextInputLayout tilName, tilMiddle, tilLast, tilBirth, tilEmail, tilPassword, tilConfirm;
     private TextInputEditText etName;
     EditText etMiddle, etLast, etEmailSignup, etPasswordSignup, etConfirmSignup, etBirth;
     EditText etEmailLogin, etPasswordLogin;
@@ -53,6 +54,16 @@ public class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences("login", MODE_PRIVATE);
 
         initViews();
+        LinearLayout.LayoutParams params =
+                (LinearLayout.LayoutParams) tilMiddle.getLayoutParams();
+        params.setMargins(0, 0, 0, 12); // left, top, right, bottom
+        tilName.setLayoutParams(params);
+        tilMiddle.setLayoutParams(params);
+        tilLast.setLayoutParams(params);
+        tilBirth.setLayoutParams(params);
+        tilEmail.setLayoutParams(params);
+        tilPassword.setLayoutParams(params);
+        tilConfirm.setLayoutParams(params);
         setupSpinner();
         loadSavedLogin();
         if(!prefs.getString("email", "").isEmpty()) {
@@ -74,11 +85,33 @@ public class MainActivity extends AppCompatActivity {
                     etMiddle.setVisibility(View.VISIBLE);
                     etBirth.setVisibility(View.VISIBLE);
                     tilName.setHint("First Name");
+                    LinearLayout.LayoutParams params =
+                            (LinearLayout.LayoutParams) tilMiddle.getLayoutParams();
+                    params.setMargins(0, 0, 0, 12); // left, top, right, bottom
+                    tilName.setLayoutParams(params);
+                    tilMiddle.setLayoutParams(params);
+                    tilLast.setLayoutParams(params);
+                    tilBirth.setLayoutParams(params);
+                    tilEmail.setLayoutParams(params);
+                    tilPassword.setLayoutParams(params);
+                    tilConfirm.setLayoutParams(params);
                 } else {
                     etLast.setVisibility(View.GONE);
                     etMiddle.setVisibility(View.GONE);
                     etBirth.setVisibility(View.GONE);
                     tilName.setHint("Company Name");
+                    LinearLayout.LayoutParams params =
+                            (LinearLayout.LayoutParams) tilMiddle.getLayoutParams();
+
+                    params.setMargins(0, 0, 0, 0); // left, top, right, bottom
+                    tilName.setLayoutParams(params);
+                    tilMiddle.setLayoutParams(params);
+                    tilLast.setLayoutParams(params);
+                    tilBirth.setLayoutParams(params);
+                    params.setMargins(0, 0, 0, 12);
+                    tilEmail.setLayoutParams(params);
+                    tilPassword.setLayoutParams(params);
+                    tilConfirm.setLayoutParams(params);
                 }
             }
 
@@ -93,11 +126,17 @@ public class MainActivity extends AppCompatActivity {
         etName = findViewById(R.id.etName);
         tilName = findViewById(R.id.tilName);
         etMiddle = findViewById(R.id.etMiddle);
+        tilMiddle = findViewById(R.id.tilMiddle);
         etLast = findViewById(R.id.etLast);
+        tilLast = findViewById(R.id.tilLast);
         etBirth = findViewById(R.id.etBirth);
+        tilBirth = findViewById(R.id.tilBirth);
         etEmailSignup = findViewById(R.id.etEmailSignup);
+        tilEmail = findViewById(R.id.tilEmail);
         etPasswordSignup = findViewById(R.id.etPasswordSignup);
+        tilPassword = findViewById(R.id.tilPassword);
         etConfirmSignup = findViewById(R.id.etConfirmSignup);
+        tilConfirm = findViewById(R.id.tilConfirm);
 
         etEmailLogin = findViewById(R.id.etEmailLogin);
         etPasswordLogin = findViewById(R.id.etPasswordLogin);
