@@ -258,8 +258,10 @@ public class AddInternshipActivity extends AppCompatActivity {
 
         StringRequest req = new StringRequest(Request.Method.POST, url,
                 response -> {
-                    if (response.contains("success"))
+                    if (response.contains("success")) {
                         Toast.makeText(this, "Internship Added", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
                     else
                         Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
                 },
