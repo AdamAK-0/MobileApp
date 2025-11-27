@@ -95,10 +95,10 @@ public class MainActivity extends AppCompatActivity {
                     tilEmail.setLayoutParams(params);
                     tilPassword.setLayoutParams(params);
                     tilConfirm.setLayoutParams(params);
+                    tilMiddle.setVisibility(View.VISIBLE);
+                    tilLast.setVisibility(View.VISIBLE);
+                    tilBirth.setVisibility(View.VISIBLE);
                 } else {
-                    etLast.setVisibility(View.GONE);
-                    etMiddle.setVisibility(View.GONE);
-                    etBirth.setVisibility(View.GONE);
                     tilName.setHint("Company Name");
                     LinearLayout.LayoutParams params =
                             (LinearLayout.LayoutParams) tilMiddle.getLayoutParams();
@@ -112,6 +112,12 @@ public class MainActivity extends AppCompatActivity {
                     tilEmail.setLayoutParams(params);
                     tilPassword.setLayoutParams(params);
                     tilConfirm.setLayoutParams(params);
+                    etLast.setVisibility(View.GONE);
+                    etMiddle.setVisibility(View.GONE);
+                    etBirth.setVisibility(View.GONE);
+                    tilMiddle.setVisibility(View.GONE);
+                    tilLast.setVisibility(View.GONE);
+                    tilBirth.setVisibility(View.GONE);
                 }
             }
 
