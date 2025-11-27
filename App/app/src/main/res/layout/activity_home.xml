@@ -13,14 +13,47 @@
         android:background="@color/rich_gold"
         app:title="Internships"
         app:titleTextColor="@color/white"/>
-
-    <SearchView
-        android:id="@+id/searchBar"
+    <LinearLayout
+        android:id="@+id/searchFilterRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:queryHint="Search internships..."
+        android:orientation="horizontal"
+        android:layout_margin="8dp">
+    <SearchView
+        android:id="@+id/searchBar"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:queryHint="Search"
         android:layout_margin="8dp"
         android:background="@color/white" />
+    <AutoCompleteTextView
+        android:id="@+id/filterStatus"
+        android:layout_width="0dp"
+        android:layout_weight="0.5"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_dropdown"
+        android:hint="Status"
+        android:layout_marginTop="8dp"
+        android:padding="10dp"
+        android:inputType="none"
+        android:clickable="true"
+        android:focusable="false" />
+
+    <AutoCompleteTextView
+        android:id="@+id/filterMode"
+        android:layout_width="0dp"
+        android:layout_weight="0.5"
+        android:layout_marginTop="8dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_dropdown"
+        android:hint="Type"
+        android:padding="10dp"
+        android:inputType="none"
+        android:clickable="true"
+        android:focusable="false" />
+
+</LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

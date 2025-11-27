@@ -15,8 +15,11 @@ public class Internship implements Serializable {
     public String endDate;
     public int maxSlots;
     public int slots;
+    public String createdAt;
+    public String status;
 
-    public Internship(int id, int company_id, String companyName, String name, String description, String type, String photo) {
+
+    public Internship(int id, int company_id, String companyName, String name, String description, String type, String photo, int rating, String startDate, String endDate, int maxSlots, String createdAt) {
         this.id = id;
         this.company_id = company_id;
         this.companyName = companyName;
@@ -24,6 +27,12 @@ public class Internship implements Serializable {
         this.description = description;
         this.type = type;
         this.photo = photo;
+        this.rating = rating;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.maxSlots = maxSlots;
+        this.createdAt = createdAt;
+        setStatus("apply");
     }
 
     public String getPhoto() {
@@ -62,5 +71,12 @@ public class Internship implements Serializable {
     }
     public int getCompany_id() {
         return company_id;
+    }
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setStatus(String applied) {
+        this.status = applied;
     }
 }

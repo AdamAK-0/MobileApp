@@ -1,57 +1,106 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp">
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!-- Image -->
         <ImageView
             android:id="@+id/imgInternshipDialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="centerCrop"
+            android:background="#E0E0E0"
             android:src="@drawable/ic_image"
-            android:background="#E0E0E0" />
+            android:radius="12dp" />
 
+        <!-- Internship Name -->
         <TextView
             android:id="@+id/tvDialogName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:textStyle="bold"
+            android:textColor="#000"
             android:layout_marginTop="12dp" />
 
+        <!-- Company Name -->
         <TextView
             android:id="@+id/tvDialogCompany"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
+            android:textColor="#555"
             android:layout_marginTop="4dp" />
 
+        <!-- Type -->
         <TextView
             android:id="@+id/tvDialogType"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"
+            android:textStyle="italic"
+            android:textColor="#777"
             android:layout_marginTop="4dp" />
 
+        <!-- Rating -->
         <TextView
-            android:id="@+id/tvDialogDescription"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvDialogRating"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:layout_marginTop="8dp" />
+            android:textColor="#333"
+            android:layout_marginTop="6dp" />
 
+        <!-- Dates -->
+        <TextView
+            android:id="@+id/tvDialogDates"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#333"
+            android:layout_marginTop="6dp" />
+
+        <!-- Slots -->
+        <TextView
+            android:id="@+id/tvDialogSlots"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#333"
+            android:layout_marginTop="6dp" />
+
+        <!-- Created at -->
+        <TextView
+            android:id="@+id/tvDialogCreated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#888"
+            android:layout_marginTop="4dp" />
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/tvDialogDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#000"
+            android:layout_marginTop="12dp" />
+
+        <!-- Apply Button -->
         <Button
             android:id="@+id/btnDialogApply"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Apply"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="18dp"
             android:backgroundTint="@color/rich_gold"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white" />
+
     </LinearLayout>
 </ScrollView>
