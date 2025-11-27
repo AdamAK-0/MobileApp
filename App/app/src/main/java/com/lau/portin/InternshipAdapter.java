@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -121,7 +122,7 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
 
         // Delete click
         h.btnDelete.setOnClickListener(v -> {
-            deleteInternship(i.getId(), pos, h.itemView.getContext());
+            deleteInternshipWithConfirm(i.getId(), pos, h.itemView.getContext());
         });
 
         // Edit click
@@ -260,6 +261,9 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
                 return "Applied";
         }
     }
+    private void deleteInternshipWithConfirm(int internshipId, int position, Context context) {
+        showDeleteConfirmation(context, () -> deleteInternship(internshipId, position, context));
+    }
 
     private void deleteInternship(int internshipId, int position, Context context) {
         String url = AddInternshipActivity.BASE_URL + "delete_internship.php?internship_id=" + internshipId;
@@ -279,6 +283,16 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
 
         Volley.newRequestQueue(context).add(req);
     }
+    private void showDeleteConfirmation(Context context, Runnable onConfirm) {
+        new AlertDialog.Builder(context)
+                .setTitle("Delete Internship")
+                .setMessage("Are you sure you want to delete this internship?")
+                .setCancelable(true)
+                .setPositiveButton("Delete", (dialog, which) -> onConfirm.run())
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
 
     private void applyToInternship(int internshipId, int userId, ViewHolder h) {
         String url = AddInternshipActivity.BASE_URL + "apply_to_internship.php";
