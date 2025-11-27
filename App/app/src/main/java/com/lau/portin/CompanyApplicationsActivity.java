@@ -1,10 +1,14 @@
 package com.lau.portin;
 
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -23,10 +27,15 @@ public class CompanyApplicationsActivity extends AppCompatActivity {
 
     RecyclerView rv;
     SwipeRefreshLayout swipeRefreshLayout;
-    TextView tvTitle;
+    Toolbar tvTitle;
     ArrayList<Application> list = new ArrayList<>();
     ApplicationAdapter adapter;
     Internship internship;
+    SearchView searchView;
+    AutoCompleteTextView filterStatus;
+    String selectedStatus = "";
+    ArrayList<Application> fullList = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +44,25 @@ public class CompanyApplicationsActivity extends AppCompatActivity {
 
         rv = findViewById(R.id.recyclerApplications);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshApplications);
-        tvTitle = findViewById(R.id.tvApplicationsTitle);
+        tvTitle = findViewById(R.id.toolbarApplications);
+        searchView = findViewById(R.id.searchApplications);
+        searchView.setOnClickListener(v -> searchView.setIconified(false));
+        searchView.setQueryHint("Search user");
+        filterStatus = findViewById(R.id.filterStatusApplications);
+
+// Status list
+        String[] statuses = {"all", "applied", "in_review", "accepted", "rejected"};
+
+        ArrayAdapter<String> statusAdapter =
+                new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, statuses);
+
+        filterStatus.setAdapter(statusAdapter);
+        //filterStatus.setText("All", false);
+
 
         internship = (Internship) getIntent().getSerializableExtra("internship");
         if (internship != null) {
-            tvTitle.setText("Applications - " + internship.getName());
+            tvTitle.setTitle("Applications - " + internship.getName());
         }
 
         rv.setLayoutManager(new LinearLayoutManager(this));
@@ -47,6 +70,26 @@ public class CompanyApplicationsActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
 
         swipeRefreshLayout.setOnRefreshListener(this::loadApplications);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                applyFilters();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                applyFilters();
+                return true;
+            }
+        });
+        filterStatus.setOnClickListener(v -> filterStatus.showDropDown());
+        filterStatus.setOnItemClickListener((parent, view, position, id) ->
+        {selectedStatus = statuses[position];
+        if (selectedStatus.equals("all")) {
+            selectedStatus = "";
+        }
+        applyFilters();});
 
         loadApplications();
     }
@@ -68,11 +111,11 @@ public class CompanyApplicationsActivity extends AppCompatActivity {
                 response -> {
                     try {
                         JSONArray arr = new JSONArray(response);
-                        list.clear();
+                        fullList.clear();
 
                         for (int i = 0; i < arr.length(); i++) {
                             JSONObject o = arr.getJSONObject(i);
-                            list.add(new Application(
+                            fullList.add(new Application(
                                     o.getInt("application_id"),
                                     o.getString("user_name"),
                                     o.getString("user_email"),
@@ -81,8 +124,7 @@ public class CompanyApplicationsActivity extends AppCompatActivity {
                                     o.optString("user_photo", "")
                             ));
                         }
-
-                        adapter.notifyDataSetChanged();
+                        applyFilters();
                     } catch (JSONException e) {
                         Toast.makeText(this, "Parse error", Toast.LENGTH_SHORT).show();
                     }
@@ -96,4 +138,25 @@ public class CompanyApplicationsActivity extends AppCompatActivity {
 
         Volley.newRequestQueue(this).add(req);
     }
+    private void applyFilters() {
+        String search = searchView.getQuery().toString().toLowerCase();
+
+        list.clear();
+
+        for (Application a : fullList) {
+
+            boolean matchesSearch = a.getUserName().toLowerCase().contains(search) || a.getUserEmail().toLowerCase().contains(search);
+
+            boolean matchesStatus =
+                    selectedStatus.isEmpty()||
+                            a.getStatus().equals(selectedStatus);
+
+            if (matchesSearch && matchesStatus) {
+                list.add(a);
+            }
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
 }
