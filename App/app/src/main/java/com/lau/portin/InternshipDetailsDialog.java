@@ -1,6 +1,7 @@
 package com.lau.portin;
 
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.android.volley.Request;
@@ -29,6 +31,7 @@ public class InternshipDetailsDialog extends DialogFragment {
     private User currentUser;
     private String type;
     private InternshipAdapter.ViewHolder h;
+    private Runnable dismissCallback;
 
 
     public InternshipDetailsDialog(Internship internship, User currentUser, String type, InternshipAdapter.ViewHolder h) {
@@ -267,4 +270,15 @@ public class InternshipDetailsDialog extends DialogFragment {
                 return "Applied";
         }
     }
+
+    public void setOnDismissListener(Runnable callback) {
+        this.dismissCallback = callback;
+    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (dismissCallback != null) dismissCallback.run();
+    }
+
 }

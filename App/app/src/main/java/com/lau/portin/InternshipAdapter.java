@@ -33,6 +33,8 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
     private ArrayList<Internship> originalList;
     static String type;
     private User currentUser;
+    private boolean isDialogOpen = false;
+
 
     public InternshipAdapter(ArrayList<Internship> list, String type, User currentUser) {
         this.list = list;
@@ -161,8 +163,11 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
         } else {
             // For regular users, show the internship details dialog
             h.itemView.setOnClickListener(v -> {
+                if (isDialogOpen) return; // Prevent second click
+                isDialogOpen = true;
                 InternshipDetailsDialog dialog = new InternshipDetailsDialog(i, currentUser, type, h);
                 dialog.show(((FragmentActivity) h.itemView.getContext()).getSupportFragmentManager(), "internship_dialog");
+                dialog.setOnDismissListener(() -> isDialogOpen = false);
             });
         }
         h.btnApply.setVisibility(View.GONE);
