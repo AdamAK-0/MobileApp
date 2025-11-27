@@ -34,14 +34,16 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
     private ArrayList<Internship> originalList;
     static String type;
     private User currentUser;
+    public Company company;
     private boolean isDialogOpen = false;
 
 
-    public InternshipAdapter(ArrayList<Internship> list, String type, User currentUser) {
+    public InternshipAdapter(ArrayList<Internship> list, String type, User currentUser, Company company) {
         this.list = list;
         this.originalList = new ArrayList<>(list);
         InternshipAdapter.type = type;
         this.currentUser = currentUser;
+        this.company = company;
     }
 
     public void filter(String text) {
@@ -130,6 +132,7 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
             Intent intent = new Intent(h.itemView.getContext(), AddInternshipActivity.class);
             intent.putExtra("edit_mode", true);
             intent.putExtra("internship", i); // Internship implements Serializable
+            intent.putExtra("company", company);
             h.itemView.getContext().startActivity(intent);
         });
 

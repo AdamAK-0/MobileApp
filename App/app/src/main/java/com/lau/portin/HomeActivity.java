@@ -37,6 +37,8 @@ public class HomeActivity extends AppCompatActivity {
     AutoCompleteTextView filterStatus, filterMode;
     String selectedStatus = "";
     String selectedMode = "";
+    Company company;
+
     public static final String BASE_URL = "http://10.0.2.2/portin/";
 
     @Override
@@ -89,7 +91,7 @@ public class HomeActivity extends AppCompatActivity {
         fab.setOnClickListener(v -> {
             Intent i = new Intent(HomeActivity.this, AddInternshipActivity.class);
             i.putExtra("type", type);
-            i.putExtra("company", (Company) getIntent().getSerializableExtra("company"));
+            i.putExtra("company", company);
             startActivity(i);
         });
 
@@ -99,6 +101,7 @@ public class HomeActivity extends AppCompatActivity {
             if (type != null) {
                 if (type.equals("Company")) {
                     fab.setVisibility(View.VISIBLE);
+                    company = (Company) intent.getSerializableExtra("company");
                 }
                 else {
                     fab.setVisibility(View.GONE);
@@ -111,7 +114,7 @@ public class HomeActivity extends AppCompatActivity {
         }
         // recycler setup
         rv.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new InternshipAdapter(list, type, currentUser);
+        adapter = new InternshipAdapter(list, type, currentUser, company);
         rv.setAdapter(adapter);
 
         // load data
@@ -200,7 +203,7 @@ public class HomeActivity extends AppCompatActivity {
                             ));
                         }
 
-                        adapter = new InternshipAdapter(list, type, currentUser);
+                        adapter = new InternshipAdapter(list, type, currentUser, company);
                         rv.setAdapter(adapter);
 
                     } catch (Exception e) {
@@ -246,7 +249,7 @@ public class HomeActivity extends AppCompatActivity {
                             ));
                         }
 
-                        adapter = new InternshipAdapter(list, type, currentUser);
+                        adapter = new InternshipAdapter(list, type, currentUser, company);
                         rv.setAdapter(adapter);
 
                     } catch (Exception e) {
