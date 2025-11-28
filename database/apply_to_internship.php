@@ -12,7 +12,7 @@ if (!isset($_POST['user_id']) || !isset($_POST['internship_id'])) {
 $user_id       = mysqli_real_escape_string($con, $_POST['user_id']);
 $internship_id = mysqli_real_escape_string($con, $_POST['internship_id']);
 
-// Check if this user already applied to this internship
+// 1) If this user already applied => treat as success (no error toast)
 $checkQuery = "SELECT application_id, status 
                FROM user_applications 
                WHERE user_id = '$user_id' AND internship_id = '$internship_id'
@@ -21,11 +21,10 @@ $checkQuery = "SELECT application_id, status
 $checkResult = mysqli_query($con, $checkQuery);
 
 if ($checkResult && mysqli_num_rows($checkResult) > 0) {
-    // Already applied before: treat as logical success for the app UI
     $existing = mysqli_fetch_assoc($checkResult);
 
     echo json_encode([
-        "status"          => "success",      // <-- IMPORTANT for the Android toast
+        "status"          => "success",
         "already_applied" => true,
         "application_id"  => $existing['application_id'],
         "current_status"  => $existing['status']
@@ -33,7 +32,40 @@ if ($checkResult && mysqli_num_rows($checkResult) > 0) {
     exit();
 }
 
-// Otherwise insert a new application (default status = applied)
+// 2) Check current used slots vs max_slots
+$capQuery = "
+    SELECT 
+        max_slots,
+        (
+            SELECT COUNT(*) 
+            FROM user_applications 
+            WHERE internship_id = '$internship_id'
+              AND status IN ('applied','in_review','accepted')
+        ) AS used_slots
+    FROM internships
+    WHERE internship_id = '$internship_id'
+    LIMIT 1
+";
+
+$capResult = mysqli_query($con, $capQuery);
+
+if ($capResult && $capRow = mysqli_fetch_assoc($capResult)) {
+    $maxSlots  = (int)$capRow['max_slots'];
+    $usedSlots = (int)$capRow['used_slots'];
+
+    if ($maxSlots > 0 && $usedSlots >= $maxSlots) {
+        // Internship is full -> block application
+        echo json_encode([
+            "status"       => "full",
+            "message"      => "no_slots_available",
+            "max_slots"    => $maxSlots,
+            "used_slots"   => $usedSlots
+        ]);
+        exit();
+    }
+}
+
+// 3) Otherwise insert a new application (default status = applied)
 $insertQuery = "INSERT INTO user_applications (user_id, internship_id, status, applied_at)
                 VALUES ('$user_id', '$internship_id', 'applied', NOW())";
 
@@ -86,7 +118,6 @@ if (mysqli_query($con, $insertQuery)) {
         }
     }
 
-    // Return success for the Android app
     echo json_encode(["status" => "success"]);
 } else {
     echo json_encode([
