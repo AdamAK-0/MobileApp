@@ -4,11 +4,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
 import okhttp3.*;
+import com.lau.portin.BuildConfig;
 
 public class SkillExtractor {
 
     private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
-    private static final String API_KEY = "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";  // Replace
+    private static final String API_KEY = BuildConfig.API_KEY;
+    // Replace
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
     private final OkHttpClient client = new OkHttpClient();
