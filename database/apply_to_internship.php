@@ -21,10 +21,12 @@ $checkQuery = "SELECT application_id, status
 $checkResult = mysqli_query($con, $checkQuery);
 
 if ($checkResult && mysqli_num_rows($checkResult) > 0) {
+    // Already applied before: treat as logical success for the app UI
     $existing = mysqli_fetch_assoc($checkResult);
 
     echo json_encode([
-        "status"          => "already_applied",
+        "status"          => "success",      // <-- IMPORTANT for the Android toast
+        "already_applied" => true,
         "application_id"  => $existing['application_id'],
         "current_status"  => $existing['status']
     ]);
@@ -58,7 +60,11 @@ if (mysqli_query($con, $insertQuery)) {
     if ($infoResult = mysqli_query($con, $infoQuery)) {
         if ($infoRow = mysqli_fetch_assoc($infoResult)) {
             $toEmail  = $infoRow['user_email'];
-            $fullName = trim($infoRow['first_name'] . ' ' . $infoRow['middle_name'] . ' ' . $infoRow['last_name']);
+            $fullName = trim(
+                $infoRow['first_name'] . ' ' .
+                $infoRow['middle_name'] . ' ' .
+                $infoRow['last_name']
+            );
 
             $safeInternship = htmlspecialchars($infoRow['internship_name'], ENT_QUOTES, 'UTF-8');
             $safeCompany    = htmlspecialchars($infoRow['company_name'], ENT_QUOTES, 'UTF-8');
@@ -75,11 +81,12 @@ if (mysqli_query($con, $insertQuery)) {
                 <p>Best of luck!<br>PortIn Internship Portal</p>
             ";
 
-            // Best‑effort: if sending fails, we still keep the application.
+            // Best-effort: if sending fails, we still keep the application.
             @smtp_send_mail($toEmail, $fullName, $subject, $body);
         }
     }
 
+    // Return success for the Android app
     echo json_encode(["status" => "success"]);
 } else {
     echo json_encode([
