@@ -42,6 +42,11 @@
             android:name=".CompanyApplicationsActivity"
             android:exported="false">
         </activity>
+        <activity
+            android:name=".SkillActivity"
+            android:exported="false">
+        </activity>
+
     </application>
 
 </manifest>

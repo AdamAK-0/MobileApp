@@ -16,6 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.android.volley.Request;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
@@ -38,6 +39,8 @@ public class HomeActivity extends AppCompatActivity {
     String selectedStatus = "";
     String selectedMode = "";
     Company company;
+    static BottomNavigationView bottomNav;
+
 
     public static final String BASE_URL = "http://10.0.2.2/portin/";
 
@@ -52,6 +55,7 @@ public class HomeActivity extends AppCompatActivity {
         searchBar.setOnClickListener(v -> searchBar.setIconified(false));
         filterStatus = findViewById(R.id.filterStatus);
         filterMode = findViewById(R.id.filterMode);
+        bottomNav = findViewById(R.id.bottomNav);
 
 // Status options
         String[] statuses = {"all", "apply", "applied", "accepted", "rejected", "in_review"};
@@ -157,6 +161,27 @@ public class HomeActivity extends AppCompatActivity {
         if(type.equals("Company")) {
             filterStatus.setVisibility(View.GONE);
         }
+        // Hide Skills for Company type
+        if (type.equals("Company")) {
+            bottomNav.getMenu().findItem(R.id.nav_skills).setVisible(false);
+        }
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.nav_home) {
+                // Already here
+                return true;
+            }
+            if (id == R.id.nav_skills) {
+                Intent i = new Intent(HomeActivity.this, SkillActivity.class);
+                i.putExtra("user", currentUser);
+                startActivity(i);
+                return true;
+            }
+
+            return false;
+        });
     }
 
     @Override
