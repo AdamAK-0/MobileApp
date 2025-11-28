@@ -1,15 +1,21 @@
 <?php
 // Gmail SMTP configuration for sending notification emails.
-// IMPORTANT:
-// 1. Replace the placeholders below with your own Gmail address and APP PASSWORD.
-// 2. For security, enable 2‑step verification on your Google account
-//    and create an "App password" for "Mail". Use that app password here.
-// 3. Do NOT commit your real password to public repositories.
 
 define('SMTP_HOST', 'smtp.gmail.com');
 define('SMTP_PORT', 587);
-define('SMTP_USERNAME', 'your_gmail_address@gmail.com');     // TODO: change this
-define('SMTP_PASSWORD', 'your_gmail_app_password_here');     // TODO: change this (App password)
-define('FROM_EMAIL', SMTP_USERNAME);                         // Sender address
-define('FROM_NAME',  'PortIn Internship Portal');            // Sender name shown to students
+
+// Your Gmail account that will send the emails
+define('SMTP_USERNAME', 'husseinzeineddine806@gmail.com');
+
+// IMPORTANT:
+//  - Do NOT put your normal Gmail login password here.
+//  - Put the NEW 16-character Gmail App Password you generated in
+//    Google Account → Security → 2-Step Verification → App passwords.
+//  - Example: Google shows "abcd efgh ijkl mnop" → you can paste
+//    either with spaces or without: "abcdefghijklemnop".
+define('SMTP_PASSWORD', 'zfbu zxyk qcft jovp');
+
+// Sender info that students will see
+define('FROM_EMAIL', 'husseinzeineddine806@gmail.com');
+define('FROM_NAME',  'PortIn Internship Portal');
 ?>
