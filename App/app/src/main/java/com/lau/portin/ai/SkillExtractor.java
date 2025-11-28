@@ -1,5 +1,7 @@
 package com.lau.portin.ai;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
@@ -80,6 +82,7 @@ public class SkillExtractor {
                         JSONObject msg = choices.getJSONObject(0).getJSONObject("message");
                         String content = msg.getString("content");
 
+                        Log.d("SkillExtractor", "Response: " + content);
                         callback.onResult(content);
 
                     } catch (Exception ex) {
