@@ -157,6 +157,7 @@ public class HomeFragment extends Fragment {
                                     o.getString("start_date"),
                                     o.getString("end_date"),
                                     o.getInt("max_slots"),
+                                    o.optInt("slots", 0),
                                     o.getString("created_at")
                             ));
                         }
@@ -196,6 +197,7 @@ public class HomeFragment extends Fragment {
                                     o.getString("start_date"),
                                     o.getString("end_date"),
                                     o.getInt("max_slots"),
+                                    o.optInt("slots", 0),
                                     o.getString("created_at")
                             ));
                         }

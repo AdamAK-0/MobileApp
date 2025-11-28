@@ -94,11 +94,17 @@ public class InternshipDetailsDialog extends DialogFragment {
                 response -> {
                     try {
                         JSONObject obj = new JSONObject(response);
-                        if ("success".equals(obj.optString("status"))) {
+                        String status = obj.optString("status");
+
+                        if ("success".equals(status)) {
                             Toast.makeText(getContext(), "Application submitted", Toast.LENGTH_SHORT).show();
                             applyBtn.setEnabled(false);
                             applyBtn.setText("Applied");
                             loadApplicationStatus(internshipId, userId, h, applyBtn);
+                        } else if ("full".equals(status)) {
+                            Toast.makeText(getContext(), "No available slots for this internship", Toast.LENGTH_SHORT).show();
+                            applyBtn.setEnabled(false);
+                            applyBtn.setText("Full");
                         } else {
                             Toast.makeText(getContext(), "Failed to apply", Toast.LENGTH_SHORT).show();
                             applyBtn.setEnabled(true);
@@ -143,13 +149,27 @@ public class InternshipDetailsDialog extends DialogFragment {
                                 h.tvApplicationStatus.setText("Status: " + prettifyStatus(statusCode));
                             }
                         } else {
-                            // Not applied yet
-                            h.btnApply.setEnabled(true);
-                            apply.setEnabled(true);
-                            h.btnApply.setText("Apply");
-                            apply.setText("Apply");
-                            if (h.tvApplicationStatus != null) {
-                                h.tvApplicationStatus.setVisibility(View.GONE);
+                            // Not applied yet -> check if slots are full
+                            if (internship.getSlots() >= internship.getMaxSlots()) {
+                                // No available slots
+                                h.btnApply.setEnabled(false);
+                                apply.setEnabled(false);
+                                h.btnApply.setText("Full");
+                                apply.setText("Full");
+
+                                if (h.tvApplicationStatus != null) {
+                                    h.tvApplicationStatus.setVisibility(View.VISIBLE);
+                                    h.tvApplicationStatus.setText("Slots are full");
+                                }
+                            } else {
+                                // Slots available -> normal apply state
+                                h.btnApply.setEnabled(true);
+                                apply.setEnabled(true);
+                                h.btnApply.setText("Apply");
+                                apply.setText("Apply");
+                                if (h.tvApplicationStatus != null) {
+                                    h.tvApplicationStatus.setVisibility(View.GONE);
+                                }
                             }
                         }
                     } catch (JSONException e) {
