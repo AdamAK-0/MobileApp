@@ -89,6 +89,7 @@ public class InternshipDetailsDialog extends DialogFragment {
 
     private void applyToInternship(int internshipId, int userId, Button applyBtn) {
         String url = AddInternshipActivity.BASE_URL + "apply_to_internship.php";
+        applyBtn.setEnabled(false);
         StringRequest req = new StringRequest(Request.Method.POST, url,
                 response -> {
                     try {
@@ -97,11 +98,14 @@ public class InternshipDetailsDialog extends DialogFragment {
                             Toast.makeText(getContext(), "Application submitted", Toast.LENGTH_SHORT).show();
                             applyBtn.setEnabled(false);
                             applyBtn.setText("Applied");
+                            loadApplicationStatus(internshipId, userId, h, applyBtn);
                         } else {
                             Toast.makeText(getContext(), "Failed to apply", Toast.LENGTH_SHORT).show();
+                            applyBtn.setEnabled(true);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        applyBtn.setEnabled(true);
                     }
                 },
                 error -> Toast.makeText(getContext(), "Network error", Toast.LENGTH_SHORT).show()
