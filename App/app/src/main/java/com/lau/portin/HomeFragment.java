@@ -2,31 +2,30 @@ package com.lau.portin;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
+import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.android.volley.Request;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HomeActivity extends BaseActivity {
+public class HomeFragment extends Fragment {
 
     RecyclerView rv;
     ArrayList<Internship> list = new ArrayList<>();
@@ -36,131 +35,87 @@ public class HomeActivity extends BaseActivity {
     AutoCompleteTextView filterStatus, filterMode;
     String selectedStatus = "";
     String selectedMode = "";
-    //static BottomNavigationView bottomNav;
-
 
     public static final String BASE_URL = "http://10.0.2.2/portin/";
 
+    protected User currentUser;
+    protected Company company;
+    protected String type;
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        // Set BaseActivity fields first
-//        Intent intent = getIntent();
-//        if (intent != null) {
-//            type = intent.getStringExtra("type");
-//            if (type != null) {
-//                if (type.equals("Company")) {
-//                    company = (Company) intent.getSerializableExtra("company");
-//                }
-//                if (type.equals("User")) {
-//                    currentUser = (User) intent.getSerializableExtra("user");
-//                }
-//            }
-//        }
-        super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_home);
-        setActivityLayout(R.layout.activity_home);
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_home, container, false);
 
-        // views
-        rv = findViewById(R.id.recyclerInternships);
-        searchBar = findViewById(R.id.searchBar);
+        // Get parent activity values
+        if (getActivity() instanceof BaseFragmentActivity) {
+            BaseFragmentActivity main = (BaseFragmentActivity) getActivity();
+            currentUser = main.currentUser;
+            company = main.company;
+            type = main.type;
+        }
+
+        rv = view.findViewById(R.id.recyclerInternships);
+        searchBar = view.findViewById(R.id.searchBar);
         searchBar.setOnClickListener(v -> searchBar.setIconified(false));
-        filterStatus = findViewById(R.id.filterStatus);
-        filterMode = findViewById(R.id.filterMode);
-        //bottomNav = findViewById(R.id.bottomNav);
+        filterStatus = view.findViewById(R.id.filterStatus);
+        filterMode = view.findViewById(R.id.filterMode);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
+        FloatingActionButton fab = view.findViewById(R.id.btnAddInternship);
 
-// Status options
+        // Status options
         String[] statuses = {"all", "apply", "applied", "accepted", "rejected", "in_review"};
-        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(this,
+        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_dropdown_item_1line, statuses);
         filterStatus.setAdapter(statusAdapter);
 
-// Mode options
+        // Mode options
         String[] modes = {"all", "in-person", "remote", "hybrid"};
-        ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(this,
+        ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_dropdown_item_1line, modes);
         filterMode.setAdapter(modeAdapter);
 
-// On select
         filterStatus.setOnClickListener(v -> filterStatus.showDropDown());
         filterMode.setOnClickListener(v -> filterMode.showDropDown());
 
-        filterStatus.setOnItemClickListener((parent, view, position, id) -> {
-            selectedStatus = statuses[position];
-            if (selectedStatus.equals("all")) {
-                selectedStatus = "";
-            }
+        filterStatus.setOnItemClickListener((parent, v, position, id) -> {
+            selectedStatus = statuses[position].equals("all") ? "" : statuses[position];
             applyFilters();
         });
 
-        filterMode.setOnItemClickListener((parent, view, position, id) -> {
-            selectedMode = modes[position];
-            if (selectedMode.equals("all")) {
-                selectedMode = "";
-            }
+        filterMode.setOnItemClickListener((parent, v, position, id) -> {
+            selectedMode = modes[position].equals("all") ? "" : modes[position];
             applyFilters();
         });
-
-        swipeRefreshLayout = findViewById(R.id.swipeRefresh);
-        FloatingActionButton fab = findViewById(R.id.btnAddInternship);
 
         fab.setOnClickListener(v -> {
-            Intent i = new Intent(HomeActivity.this, AddInternshipActivity.class);
+            Intent i = new Intent(getActivity(), AddInternshipActivity.class);
             i.putExtra("type", type);
             i.putExtra("company", company);
             startActivity(i);
         });
 
-//        if (intent != null) {
-//            type = intent.getStringExtra("type");
-//            if (type != null) {
-//                if (type.equals("Company")) {
-//                    fab.setVisibility(View.VISIBLE);
-//                    company = (Company) intent.getSerializableExtra("company");
-//                }
-//                else {
-//                    fab.setVisibility(View.GONE);
-//                }
-//
-//                if (type.equals("User")) {
-//                    currentUser = (User) intent.getSerializableExtra("user");
-//                }
-//            }
-//        }
-        if (type.equals("Company")) {
-            fab.setVisibility(View.VISIBLE);
-        }
-        else {
-            fab.setVisibility(View.GONE);
-        }
-        // recycler setup
-        rv.setLayoutManager(new LinearLayoutManager(this));
+        if (type.equals("Company")) fab.setVisibility(View.VISIBLE);
+        else fab.setVisibility(View.GONE);
+
+        // Recycler setup
+        rv.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new InternshipAdapter(list, type, currentUser, company);
         rv.setAdapter(adapter);
 
-        // load data
-        if (type.equals("Company")) {
-            //Company company = (Company) intent.getSerializableExtra("company");
-            if (company != null) {
-                loadCompanyInternships(company.getCompany_id());
-            }
-        } else {
-            loadInternships();
-        }
+        // Load data
+        if (type.equals("Company") && company != null) loadCompanyInternships(company.getCompany_id());
+        else loadInternships();
 
-        // pull to refresh
-        if(type.equals("Company")) {
-            swipeRefreshLayout.setOnRefreshListener(() -> {
-                //Company company = (Company) intent.getSerializableExtra("company");
-                if (company != null) {
-                    loadCompanyInternships(company.getCompany_id());
-                }
-            });
-        }
-        else {
-            swipeRefreshLayout.setOnRefreshListener(this::loadInternships);
-        }
+        // Swipe refresh
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            if (type.equals("Company") && company != null) loadCompanyInternships(company.getCompany_id());
+            else loadInternships();
+        });
 
-        // search filter
+        // Search filter
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -174,61 +129,22 @@ public class HomeActivity extends BaseActivity {
                 return true;
             }
         });
-        if(type.equals("Company")) {
-            filterStatus.setVisibility(View.GONE);
-        }
-        // Hide Skills for Company type
-        if (type.equals("Company")) {
-            bottomNav.getMenu().findItem(R.id.nav_skills).setVisible(false);
-        }
 
-        /*bottomNav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
+        if (type.equals("Company")) filterStatus.setVisibility(View.GONE);
 
-            if (id == R.id.nav_home) {
-                // Already here
-                return true;
-            }
-            if (id == R.id.nav_skills) {
-                Intent i = new Intent(HomeActivity.this, SkillActivity.class);
-                i.putExtra("user", currentUser);
-                startActivity(i);
-                return true;
-            }
-
-            return false;
-        });*/
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        bottomNav.getMenu().findItem(R.id.nav_home).setChecked(true);
-        if (type.equals("Company")) {
-            //Company company = (Company) getIntent().getSerializableExtra("company");
-            if (company != null) {
-                loadCompanyInternships(company.getCompany_id());
-            }
-        }
-        else {
-            loadInternships();
-        }
+        return view;
     }
 
     void loadInternships() {
         swipeRefreshLayout.setRefreshing(true);
-
         String url = BASE_URL + "get_all_internships.php";
-
         StringRequest req = new StringRequest(Request.Method.GET, url,
                 response -> {
                     try {
                         JSONArray arr = new JSONArray(response);
                         list.clear();
-
                         for (int i = 0; i < arr.length(); i++) {
                             JSONObject o = arr.getJSONObject(i);
-
                             list.add(new Internship(
                                     o.getInt("internship_id"),
                                     o.getInt("company_id"),
@@ -244,37 +160,30 @@ public class HomeActivity extends BaseActivity {
                                     o.getString("created_at")
                             ));
                         }
-
                         adapter = new InternshipAdapter(list, type, currentUser, company);
                         rv.setAdapter(adapter);
-
                     } catch (Exception e) {
-                        Toast.makeText(this, "JSON error", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "JSON error", Toast.LENGTH_SHORT).show();
                     }
-
                     swipeRefreshLayout.setRefreshing(false);
                 },
                 error -> {
-                    Toast.makeText(this, "Network error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Network error", Toast.LENGTH_SHORT).show();
                     swipeRefreshLayout.setRefreshing(false);
                 });
-
-        Volley.newRequestQueue(this).add(req);
+        Volley.newRequestQueue(requireContext()).add(req);
     }
+
     void loadCompanyInternships(int companyId) {
         swipeRefreshLayout.setRefreshing(true);
-
         String url = BASE_URL + "get_company_internships.php";
-
         StringRequest req = new StringRequest(Request.Method.POST, url,
                 response -> {
                     try {
                         JSONArray arr = new JSONArray(response);
                         list.clear();
-
                         for (int i = 0; i < arr.length(); i++) {
                             JSONObject o = arr.getJSONObject(i);
-
                             list.add(new Internship(
                                     o.getInt("internship_id"),
                                     o.getInt("company_id"),
@@ -290,21 +199,17 @@ public class HomeActivity extends BaseActivity {
                                     o.getString("created_at")
                             ));
                         }
-
                         adapter = new InternshipAdapter(list, type, currentUser, company);
                         rv.setAdapter(adapter);
-
                     } catch (Exception e) {
-                        Toast.makeText(this, "JSON error", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "JSON error", Toast.LENGTH_SHORT).show();
                     }
-
                     swipeRefreshLayout.setRefreshing(false);
                 },
                 error -> {
-                    Toast.makeText(this, "Network error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Network error", Toast.LENGTH_SHORT).show();
                     swipeRefreshLayout.setRefreshing(false);
-                }
-        ) {
+                }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> map = new HashMap<>();
@@ -312,31 +217,24 @@ public class HomeActivity extends BaseActivity {
                 return map;
             }
         };
-
-        Volley.newRequestQueue(this).add(req);
+        Volley.newRequestQueue(requireContext()).add(req);
     }
+
     void applyFilters() {
         ArrayList<Internship> filtered = new ArrayList<>();
-
         for (Internship i : list) {
-
             boolean matchSearch = i.getName().toLowerCase().contains(searchBar.getQuery().toString().toLowerCase());
-
-            boolean matchStatus =
-                    selectedStatus.isEmpty() ||
-                            i.status.equals(selectedStatus);
-
-            boolean matchMode =
-                    selectedMode.isEmpty() ||
-                            i.type.equalsIgnoreCase(selectedMode);
-
-            if (matchSearch && matchStatus && matchMode) {
-                filtered.add(i);
-            }
+            boolean matchStatus = selectedStatus.isEmpty() || i.status.equals(selectedStatus);
+            boolean matchMode = selectedMode.isEmpty() || i.type.equalsIgnoreCase(selectedMode);
+            if (matchSearch && matchStatus && matchMode) filtered.add(i);
         }
-
         adapter.updateList(filtered);
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (type.equals("Company") && company != null) loadCompanyInternships(company.getCompany_id());
+        else loadInternships();
+    }
 }

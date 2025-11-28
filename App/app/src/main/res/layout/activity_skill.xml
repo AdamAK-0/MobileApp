@@ -1,35 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="top"
-    android:padding="20dp"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btnUpload"
-        android:text="Upload Syllabus (PDF)"
+    <!-- Main content -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:padding="20dp">
 
-    <Button
-        android:id="@+id/btnExtract"
-        android:text="Extract Skills"
-        android:enabled="false"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"/>
+        <Button
+            android:id="@+id/btnUpload"
+            android:text="Upload Syllabus (PDF)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp">
-
-        <TableLayout
-            android:id="@+id/tableSkills"
+        <Button
+            android:id="@+id/btnExtract"
+            android:text="Extract Skills"
+            android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:stretchColumns="1"/>
-    </ScrollView>
+            android:layout_marginTop="10dp"/>
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="20dp">
+
+            <TableLayout
+                android:id="@+id/tableSkills"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="1"/>
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- Bottom Navigation -->
+<!--    <com.google.android.material.bottomnavigation.BottomNavigationView-->
+<!--        android:id="@+id/bottomNav"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="@color/white"-->
+<!--        app:menu="@menu/menu_bottom" />-->
 </LinearLayout>

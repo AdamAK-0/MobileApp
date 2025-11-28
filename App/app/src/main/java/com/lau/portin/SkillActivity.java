@@ -8,6 +8,7 @@ import android.widget.*;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.lau.portin.ai.SkillExtractor;
 
 import org.json.JSONArray;
@@ -16,7 +17,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader;
 
-public class SkillActivity extends AppCompatActivity {
+public class SkillActivity extends BaseActivity {
 
     Button btnUpload, btnExtract;
     TableLayout table;
@@ -24,13 +25,17 @@ public class SkillActivity extends AppCompatActivity {
 
     SkillExtractor extractor = new SkillExtractor();
     ArrayList<JSONArray> extractedArray = new ArrayList<>();
+    //static BottomNavigationView bottomNav;
+
 
     private static final int PICK_PDF = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_skill);
+        //setContentView(R.layout.activity_skill);
+        setActivityLayout(R.layout.activity_skill);
+
 
         btnUpload = findViewById(R.id.btnUpload);
         btnExtract = findViewById(R.id.btnExtract);
@@ -39,6 +44,26 @@ public class SkillActivity extends AppCompatActivity {
         btnUpload.setOnClickListener(v -> pickPdf());
         btnExtract.setOnClickListener(v -> extractSkillsPerPDF());
         PDFBoxResourceLoader.init(getApplicationContext());
+        //bottomNav = findViewById(R.id.bottomNav);
+        //bottomNav.getMenu().findItem(R.id.nav_skills).setChecked(true);
+        /*bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.nav_home) {
+                //Intent i = new Intent(SkillActivity.this, HomeActivity.class);
+                //i.putExtra("type", "User");
+                //i.putExtra("user", currentUser);
+                //startActivity(i);
+                finish();
+                return true;
+            }
+            if (id == R.id.nav_skills) {
+                //Already here
+                return true;
+            }
+
+            return false;
+        });*/
     }
 
     private void pickPdf() {
@@ -137,9 +162,16 @@ public class SkillActivity extends AppCompatActivity {
             table.addView(row);
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNav.getMenu().findItem(R.id.nav_skills).setChecked(true);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        HomeActivity.bottomNav.getMenu().findItem(R.id.nav_home).setChecked(true);
+        //HomeActivity.bottomNav.getMenu().findItem(R.id.nav_home).setChecked(true);
     }
 }
