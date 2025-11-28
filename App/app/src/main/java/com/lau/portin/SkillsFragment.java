@@ -41,6 +41,9 @@ public class SkillsFragment extends Fragment {
     private static final int PICK_PDF = 1001;
     private static final int PICK_TRANSCRIPT = 2001;
     String transcriptRaw = null;
+    boolean isTranscriptLoaded = false;
+    boolean isPdfLoaded = false;
+
 
     @Nullable
     @Override
@@ -75,6 +78,9 @@ public class SkillsFragment extends Fragment {
                 Uri uri = data.getData();
                 transcriptRaw = readTxt(uri);
                 Toast.makeText(getContext(), "Transcript loaded!", Toast.LENGTH_SHORT).show();
+                isTranscriptLoaded = true;
+                if (isPdfLoaded)
+                    btnExtract.setEnabled(true);
             } catch (Exception e) {
                 Toast.makeText(getContext(), "Failed to read transcript!", Toast.LENGTH_SHORT).show();
             }
@@ -96,7 +102,9 @@ public class SkillsFragment extends Fragment {
                 }
 
                 Toast.makeText(getContext(), "PDFs loaded!", Toast.LENGTH_SHORT).show();
-                btnExtract.setEnabled(true);
+                isPdfLoaded = true;
+                if (isTranscriptLoaded)
+                    btnExtract.setEnabled(true);
 
             } catch (Exception e) {
                 Toast.makeText(getContext(), "Failed to read PDF", Toast.LENGTH_SHORT).show();
@@ -154,9 +162,16 @@ public class SkillsFragment extends Fragment {
         Toast.makeText(getContext(), trans.size() + " courses found!", Toast.LENGTH_LONG).show();
         Log.d("SkillsFragment", "First Course: " + trans.get(0).code);
         for (String t : pdfTexts) {
-            extractor.extractSkills(t, result -> requireActivity().runOnUiThread(() -> {
+            String processedText = t;
+            int index = processedText.toLowerCase().indexOf("student code of conduct");
+            if (index != -1) {
+                processedText = processedText.substring(0, index).trim();
+                Log.d("SkillsFragment", "Processed: " + processedText);
+            }
+            extractor.extractSkills(processedText, result -> requireActivity().runOnUiThread(() -> {
                 try {
                     String cleanResult = result.trim();
+                    Log.d("SkillsFragment", "Extracted: " + cleanResult);
 
                     // Remove triple backticks if present
                     if (cleanResult.startsWith("```") && cleanResult.endsWith("```")) {
@@ -167,8 +182,9 @@ public class SkillsFragment extends Fragment {
                     if (cleanResult.startsWith("\"") && cleanResult.endsWith("\"")) {
                         cleanResult = cleanResult.substring(1, cleanResult.length() - 1).replace("\\\"", "\"");
                     }
-
+                    Log.d("SkillsFragment", "JSON: " + cleanResult);
                     JSONObject obj = new JSONObject(cleanResult);
+
 
                     //JSONObject obj = new JSONObject(result);
                     JSONArray skillsArr = obj.getJSONArray("skills");
@@ -178,7 +194,7 @@ public class SkillsFragment extends Fragment {
                     for (CourseGrade c : trans) {
                         if (c.code.toLowerCase().equals(code.toLowerCase().replace(" ","")) || c.code.toLowerCase().equals(code.toLowerCase()) || c.title.toLowerCase().equals(title.toLowerCase())) {
                             for(int i = 0; i < skillsArr.length(); i++) {
-                                skillsArr.put(i, skillsArr.optString(i) + " (" + gradeToPercent(c.grade) + "%, " + ")");
+                                skillsArr.put(i, skillsArr.optString(i) + " (" + gradeToPercent(c.grade) + "%)");
                             }
                             break;
                         }
