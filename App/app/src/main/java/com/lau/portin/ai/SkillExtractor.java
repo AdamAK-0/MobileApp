@@ -33,10 +33,17 @@ public class SkillExtractor {
             JSONObject systemMsg = new JSONObject();
             systemMsg.put("role", "system");
             systemMsg.put("content",
-                    "You are an AI that extracts SKILLS ONLY from any text. "
-                            + "Return the final answer as a JSON array of strings.\n"
-                            + "Example: [\"Java\", \"OOP\", \"Machine Learning\"]\n"
-                            + "Do NOT add explanations. ONLY return the array!"
+                    "You extract COURSE INFORMATION and SKILLS from academic text.\n" +
+                            "Return ONLY a JSON object in the exact format below:\n" +
+                            "{\n" +
+                            "  \"course_name\": \"...\",\n" +
+                            "  \"course_code\": \"...\",\n" +
+                            "  \"skills\": [\"...\", \"...\"]\n" +
+                            "}\n" +
+                            "- Extract ONLY the real course name.\n" +
+                            "- Extract ONLY the real course code (like CSC326).\n" +
+                            "- Extract skills as a JSON array of strings.\n" +
+                            "- NO explanations, NO extra text, ONLY the JSON object."
             );
 
             JSONObject userMsg = new JSONObject();
