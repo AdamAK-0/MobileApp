@@ -54,8 +54,7 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
             text = text.toLowerCase();
             for (Internship i : originalList) {
                 if (i.getCompanyName().toLowerCase().contains(text) ||
-                        i.getName().toLowerCase().contains(text) ||
-                        i.getType().toLowerCase().contains(text)) {
+                        i.getName().toLowerCase().contains(text)) {
                     list.add(i);
                 }
             }
@@ -66,6 +65,7 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
         this.list = newList;
         notifyDataSetChanged();
     }
+
 
 
     // Legacy constructor (not used in HomeActivity, but kept for compatibility)

@@ -318,7 +318,8 @@ public class MainActivity extends AppCompatActivity {
                                 tvToggle.setEnabled(true);
                                 if (rememberSignup.isChecked())
                                     saveLogin(emailv, passv, typev);
-                                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                //Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                Intent intent = new Intent(MainActivity.this, BaseFragmentActivity.class);
                                 intent.putExtra("type", "User");
                                 intent.putExtra("user", user); // Serializable object
                                 startActivity(intent);
@@ -349,7 +350,8 @@ public class MainActivity extends AppCompatActivity {
                                 tvToggle.setEnabled(true);
                                 if (rememberSignup.isChecked())
                                     saveLogin(emailv, passv, typev);
-                                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                //Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                Intent intent = new Intent(MainActivity.this, BaseFragmentActivity.class);
                                 intent.putExtra("type", "Company");
                                 intent.putExtra("company", company);
                                 startActivity(intent);
@@ -450,7 +452,8 @@ public class MainActivity extends AppCompatActivity {
                                     }
 
                                     Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                    //Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                    Intent intent = new Intent(MainActivity.this, BaseFragmentActivity.class);
                                     intent.putExtra("type", "User");
                                     intent.putExtra("user", user);
                                     startActivity(intent);
@@ -476,7 +479,8 @@ public class MainActivity extends AppCompatActivity {
                                     }
 
                                     Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                    //Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                    Intent intent = new Intent(MainActivity.this, BaseFragmentActivity.class);
                                     intent.putExtra("type", "Company");
                                     intent.putExtra("company", company);
                                     startActivity(intent);
