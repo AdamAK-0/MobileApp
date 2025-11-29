@@ -152,6 +152,7 @@ public class InternshipDetailsDialog extends DialogFragment {
                             // Not applied yet -> check if slots are full
                             if (internship.getSlots() >= internship.getMaxSlots()) {
                                 // No available slots
+                                internship.setStatus("full");
                                 h.btnApply.setEnabled(false);
                                 apply.setEnabled(false);
                                 h.btnApply.setText("Full");
@@ -172,6 +173,7 @@ public class InternshipDetailsDialog extends DialogFragment {
                                 }
                             }
                         }
+                        h.getBindingAdapter().notifyDataSetChanged();
                     } catch (JSONException e) {
                         // Ignore parse errors in UI
                     }
@@ -271,6 +273,8 @@ public class InternshipDetailsDialog extends DialogFragment {
                 return "Rejected";
             case "withdrawn":
                 return "Withdrawn";
+            case "full":
+                return "Full";
             case "applied":
             default:
                 return "Applied";
@@ -289,7 +293,10 @@ public class InternshipDetailsDialog extends DialogFragment {
                 return "Rejected";
             case "withdrawn":
                 return "Withdrawn";
+            case "full":
+                 return "Full";
             case "applied":
+                return "Applied";
             default:
                 return "Applied";
         }

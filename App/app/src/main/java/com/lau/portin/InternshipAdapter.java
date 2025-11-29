@@ -203,11 +203,22 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
                             }
                         } else {
                             // Not applied yet
-                            h.btnApply.setEnabled(true);
-                            h.btnApply.setText("Apply");
-                            i.setStatus("apply");
-                            if (h.tvApplicationStatus != null) {
-                                h.tvApplicationStatus.setVisibility(View.GONE);
+                            if(i.getSlots() >= i.getMaxSlots()) {
+                                h.btnApply.setEnabled(false);
+                                h.btnApply.setText("Full");
+                                i.setStatus("full");
+                                if (h.tvApplicationStatus != null) {
+                                    h.tvApplicationStatus.setVisibility(View.VISIBLE);
+                                    h.tvApplicationStatus.setText("Slots are full");
+                                }
+                            }
+                            else {
+                                h.btnApply.setEnabled(true);
+                                h.btnApply.setText("Apply");
+                                i.setStatus("apply");
+                                if (h.tvApplicationStatus != null) {
+                                    h.tvApplicationStatus.setVisibility(View.GONE);
+                                }
                             }
                         }
                     } catch (JSONException e) {
