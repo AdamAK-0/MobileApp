@@ -77,6 +77,7 @@ CREATE TABLE user_applications (
     application_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     internship_id INT NOT NULL,
+    cv_path VARCHAR(255),
     status ENUM('applied','in_review','accepted','rejected','withdrawn') DEFAULT 'applied',
     applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 

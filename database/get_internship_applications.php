@@ -15,6 +15,7 @@ SELECT
     ua.application_id,
     ua.status,
     ua.applied_at,
+    ua.cv_path AS cv_url,
     CONCAT(u.first_name, ' ', u.last_name) AS user_name,
     u.email AS user_email,
     u.photo AS user_photo
