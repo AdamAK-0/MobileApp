@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:queryHint="Search"
         android:layout_margin="8dp"
-        android:background="@color/stroke" />
+        android:background="@color/cardBackground" />
     <AutoCompleteTextView
         android:id="@+id/filterStatus"
         android:layout_width="0dp"

@@ -1,8 +1,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- BACKGROUND THAT MATCHES CONTENT HEIGHT BUT NEVER LESS THAN SCREEN -->
+    <!-- DIM BACKGROUND -->
     <ImageView
         android:id="@+id/fixedBackground"
         android:layout_width="match_parent"
@@ -10,9 +11,8 @@
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
         android:src="@drawable/bg_detail"
-        android:alpha="0.3" />
+        android:alpha="0.30" />
 
-    <!-- SCROLL CONTENT BUT FORCE MIN HEIGHT = SCREEN -->
     <ScrollView
         android:id="@+id/dialogScroll"
         android:layout_width="match_parent"
@@ -24,13 +24,14 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <!-- Image -->
+
+            <!-- Image Placeholder -->
             <ImageView
                 android:id="@+id/imgInternshipDialog"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
-                android:background="#E0E0E0"
+                android:background="@color/image_placeholder"
                 android:src="@drawable/ic_image"
                 android:layout_gravity="center" />
 
@@ -41,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="#000"
+                android:textColor="@color/text_primary"
                 android:layout_marginTop="12dp" />
 
             <!-- Company Name -->
@@ -50,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
-                android:textColor="#555"
+                android:textColor="@color/text_secondary"
                 android:layout_marginTop="4dp" />
 
             <!-- Type -->
@@ -60,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:textStyle="italic"
-                android:textColor="#777"
+                android:textColor="@color/text_tertiary"
                 android:layout_marginTop="4dp" />
 
             <!-- Rating -->
@@ -69,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
-                android:textColor="#333"
+                android:textColor="@color/text_secondary"
                 android:layout_marginTop="6dp" />
 
             <!-- Dates -->
@@ -78,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
-                android:textColor="#333"
+                android:textColor="@color/text_secondary"
                 android:layout_marginTop="6dp" />
 
             <!-- Slots -->
@@ -87,7 +88,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
-                android:textColor="#333"
+                android:textColor="@color/text_secondary"
                 android:layout_marginTop="6dp" />
 
             <!-- Created at -->
@@ -96,7 +97,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
-                android:textColor="#888"
+                android:textColor="@color/text_tertiary"
                 android:layout_marginTop="4dp" />
 
             <!-- Description -->
@@ -105,7 +106,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
-                android:textColor="#000"
+                android:textColor="@color/text_primary"
                 android:layout_marginTop="12dp" />
 
             <!-- CV Upload Card -->
@@ -123,7 +124,7 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:src="@android:drawable/ic_menu_upload"
-                    android:tint="@color/soft_gold"
+                    app:tint="@color/soft_gold"
                     android:contentDescription="CV PDF" />
 
                 <LinearLayout
@@ -139,7 +140,7 @@
                         android:layout_height="wrap_content"
                         android:text="Attach your CV (PDF)"
                         android:textStyle="bold"
-                        android:textColor="#000"
+                        android:textColor="@color/text_primary"
                         android:textSize="14sp" />
 
                     <TextView
@@ -147,7 +148,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="No file selected"
-                        android:textColor="#555"
+                        android:textColor="@color/black"
                         android:textSize="12sp"
                         android:layout_marginTop="2dp" />
 
@@ -160,7 +161,7 @@
                     android:text="Upload"
                     android:textAllCaps="false"
                     android:backgroundTint="@color/rich_gold"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@color/delete_btn_text" />
             </LinearLayout>
 
             <!-- Apply Button -->
@@ -171,9 +172,8 @@
                 android:text="@string/apply"
                 android:layout_marginTop="18dp"
                 android:backgroundTint="@color/rich_gold"
-                android:textColor="@android:color/white" />
+                android:textColor="@color/delete_btn_text" />
+
         </LinearLayout>
-
     </ScrollView>
-
 </FrameLayout>

@@ -42,4 +42,5 @@
     <color name="textSecondary">#FFD700</color>
     <color name="buttonBackground">#FFD700</color>
     <color name="buttonText">#000000</color>
+    <color name="image_placeholder">#333333</color>
 </resources>

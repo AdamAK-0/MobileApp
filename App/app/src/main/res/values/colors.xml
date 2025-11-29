@@ -34,5 +34,6 @@
     <color name="buttonBackground">#B8860B</color>
     <color name="buttonText">#FFFFFF</color>
     <color name="search">#FFFFFF</color>
+    <color name="image_placeholder">#E0E0E0</color>
 
 </resources>
