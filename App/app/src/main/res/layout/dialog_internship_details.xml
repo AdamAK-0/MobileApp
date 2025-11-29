@@ -108,6 +108,61 @@
                 android:textColor="#000"
                 android:layout_marginTop="12dp" />
 
+            <!-- CV Upload Card -->
+            <LinearLayout
+                android:id="@+id/layoutCvUpload"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/professional_rounded_box"
+                android:padding="12dp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="16dp">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@android:drawable/ic_menu_upload"
+                    android:tint="@color/soft_gold"
+                    android:contentDescription="CV PDF" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:id="@+id/tvCvTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Attach your CV (PDF)"
+                        android:textStyle="bold"
+                        android:textColor="#000"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tvCvFileName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No file selected"
+                        android:textColor="#555"
+                        android:textSize="12sp"
+                        android:layout_marginTop="2dp" />
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnPickCv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Upload"
+                    android:textAllCaps="false"
+                    android:backgroundTint="@color/rich_gold"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+
             <!-- Apply Button -->
             <Button
                 android:id="@+id/btnDialogApply"

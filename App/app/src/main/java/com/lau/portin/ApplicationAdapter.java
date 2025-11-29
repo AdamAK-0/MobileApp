@@ -1,6 +1,9 @@
 package com.lau.portin;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.content.ActivityNotFoundException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +34,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvApplicantName, tvApplicantEmail, tvAppliedAt, tvStatus;
-        Button btnInReview, btnAccepted, btnRejected;
+        Button btnInReview, btnAccepted, btnRejected, btnViewCv;
 
         public ViewHolder(View v) {
             super(v);
@@ -42,6 +45,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
             btnInReview = v.findViewById(R.id.btnMarkInReview);
             btnAccepted = v.findViewById(R.id.btnMarkAccepted);
             btnRejected = v.findViewById(R.id.btnMarkRejected);
+            btnViewCv = v.findViewById(R.id.btnViewCv);
         }
     }
 
@@ -73,6 +77,23 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
         h.btnInReview.setOnClickListener(listener);
         h.btnAccepted.setOnClickListener(listener);
         h.btnRejected.setOnClickListener(listener);
+
+        if (a.getCvUrl() != null && !a.getCvUrl().isEmpty()) {
+            h.btnViewCv.setVisibility(View.VISIBLE);
+            h.btnViewCv.setOnClickListener(v -> {
+                String fullUrl = HomeActivity.BASE_URL + a.getCvUrl();
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.parse(fullUrl), "application/pdf");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                try {
+                    context.startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(context, "No app found to open PDF files", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            h.btnViewCv.setVisibility(View.GONE);
+        }
     }
 
     private void updateStatus(Application a, String newStatus, ViewHolder h) {

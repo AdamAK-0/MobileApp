@@ -65,9 +65,40 @@ if ($capResult && $capRow = mysqli_fetch_assoc($capResult)) {
     }
 }
 
-// 3) Otherwise insert a new application (default status = applied)
-$insertQuery = "INSERT INTO user_applications (user_id, internship_id, status, applied_at)
-                VALUES ('$user_id', '$internship_id', 'applied', NOW())";
+// 3) Handle CV upload (required). Expect base64-encoded PDF from the app.
+$cv_path = null;
+if (isset($_POST['cv_base64']) && $_POST['cv_base64'] !== '') {
+    $cvBase64 = $_POST['cv_base64'];
+
+    $cvData = base64_decode($cvBase64);
+    if ($cvData === false) {
+        echo json_encode(["status" => "error", "message" => "invalid_cv_data"]);
+        exit();
+    }
+
+    $uploadDir = __DIR__ . '/uploads/cv/';
+    if (!is_dir($uploadDir)) {
+        @mkdir($uploadDir, 0777, true);
+    }
+
+    $fileName = 'cv_user_' . $user_id . '_' . time() . '.pdf';
+    $fullPath = $uploadDir . $fileName;
+
+    if (file_put_contents($fullPath, $cvData) === false) {
+        echo json_encode(["status" => "error", "message" => "cv_save_failed"]);
+        exit();
+    }
+
+    // Path relative to the web root that the Android app can append to BASE_URL
+    $cv_path = 'uploads/cv/' . $fileName;
+} else {
+    echo json_encode(["status" => "error", "message" => "missing_cv"]);
+    exit();
+}
+
+// 4) Otherwise insert a new application (default status = applied)
+$insertQuery = "INSERT INTO user_applications (user_id, internship_id, cv_path, status, applied_at)
+                VALUES ('$user_id', '$internship_id', '$cv_path', 'applied', NOW())";
 
 if (mysqli_query($con, $insertQuery)) {
     $applicationId = mysqli_insert_id($con);
