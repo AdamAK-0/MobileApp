@@ -1,7 +1,7 @@
 <?php
 require_once 'connection.php';
 
-$id = $_GET['user_id'];
+$id = $_POST['user_id'];
 
 $query = "DELETE FROM users WHERE user_id='$id'";
 

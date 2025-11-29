@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="2dp">
+    card_view:cardElevation="2dp"
+    card_view:cardBackgroundColor="@color/card_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +21,8 @@
             android:layout_height="wrap_content"
             android:text="@string/applicant_name"
             android:textStyle="bold"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textColor="@color/text_primary"/>
 
         <TextView
             android:id="@+id/tvApplicantEmail"
@@ -27,7 +30,8 @@
             android:layout_height="wrap_content"
             android:text="@string/email"
             android:textSize="14sp"
-            android:layout_marginTop="2dp" />
+            android:layout_marginTop="2dp"
+            android:textColor="@color/text_secondary"/>
 
         <TextView
             android:id="@+id/tvAppliedAt"
@@ -35,17 +39,17 @@
             android:layout_height="wrap_content"
             android:text="@string/applied_at"
             android:textSize="12sp"
-            android:textColor="@android:color/darker_gray"
+            android:textColor="@color/text_tertiary"
             android:layout_marginTop="2dp" />
 
         <Button
             android:id="@+id/btnViewCv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="View CV (PDF)"
+            android:text="@string/view_cv_pdf"
             android:textAllCaps="false"
             android:backgroundTint="@color/soft_gold"
-            android:textColor="@android:color/white"
+            android:textColor="@color/button_text1"
             android:layout_marginTop="8dp" />
 
         <LinearLayout
@@ -61,14 +65,17 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/status_applied"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"/>
 
             <Button
                 android:id="@+id/btnMarkInReview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/in_review"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:backgroundTint="@color/rich_gold"
+                android:textColor="@color/button_text1"/>
 
             <Button
                 android:id="@+id/btnMarkAccepted"
@@ -76,7 +83,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/accept"
                 android:textAllCaps="false"
-                android:layout_marginStart="4dp" />
+                android:layout_marginStart="4dp"
+                android:backgroundTint="@color/soft_gold"
+                android:textColor="@color/button_text1"/>
 
             <Button
                 android:id="@+id/btnMarkRejected"
@@ -84,7 +93,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/reject"
                 android:textAllCaps="false"
-                android:layout_marginStart="4dp" />
+                android:layout_marginStart="4dp"
+                android:backgroundTint="@color/red"
+                android:textColor="@color/button_text1"/>
         </LinearLayout>
     </LinearLayout>
 

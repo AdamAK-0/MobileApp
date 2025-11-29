@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cream_white">
+    android:background="@color/background">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -18,7 +19,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/white"
+                app:cardBackgroundColor="@color/cardBackground"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="10dp">
 
@@ -42,59 +43,63 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
-                            app:boxStrokeColor="@color/rich_gold">
+                            app:boxStrokeColor="@color/stroke">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etName"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/first_name" />
+                                android:hint="@string/first_name"
+                                android:textColor="@color/textPrimary"/>
                         </com.google.android.material.textfield.TextInputLayout>
-                        
+
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tilMiddle"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="12dp"
-                            app:boxStrokeColor="@color/rich_gold">
+                            app:boxStrokeColor="@color/stroke">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etMiddle"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/middle_name" />
+                                android:hint="@string/middle_name"
+                                android:textColor="@color/textPrimary"/>
                         </com.google.android.material.textfield.TextInputLayout>
-                        
+
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tilLast"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="12dp"
-                            app:boxStrokeColor="@color/rich_gold">
+                            app:boxStrokeColor="@color/stroke">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etLast"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/last_name" />
+                                android:hint="@string/last_name"
+                                android:textColor="@color/textPrimary"/>
                         </com.google.android.material.textfield.TextInputLayout>
-                        
+
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tilBirth"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="12dp"
-                            app:boxStrokeColor="@color/rich_gold">
+                            app:boxStrokeColor="@color/stroke">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etBirth"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="number"
-                                android:hint="@string/birth_year" />
+                                android:hint="@string/birth_year"
+                                android:textColor="@color/textPrimary"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -103,13 +108,14 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="12dp"
-                            app:boxStrokeColor="@color/rich_gold">
+                            app:boxStrokeColor="@color/stroke">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etEmailSignup"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/email" />
+                                android:hint="@string/email"
+                                android:textColor="@color/textPrimary"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -119,16 +125,17 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="12dp"
                             app:passwordToggleEnabled="true"
-                            app:boxStrokeColor="@color/rich_gold">
+                            app:boxStrokeColor="@color/stroke">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etPasswordSignup"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="textPassword"
-                                android:hint="@string/password" />
+                                android:hint="@string/password"
+                                android:textColor="@color/textPrimary"/>
                         </com.google.android.material.textfield.TextInputLayout>
-                        
+
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tilConfirm"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -136,16 +143,17 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="12dp"
                             app:passwordToggleEnabled="true"
-                            app:boxStrokeColor="@color/rich_gold">
+                            app:boxStrokeColor="@color/stroke">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etConfirmSignup"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="@string/confirm_password"
-                                android:inputType="textPassword" />
+                                android:inputType="textPassword"
+                                android:textColor="@color/textPrimary"/>
                         </com.google.android.material.textfield.TextInputLayout>
-                        
+
                         <Spinner
                             android:id="@+id/spinnerSignup"
                             android:layout_width="match_parent"
@@ -157,7 +165,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/remember_me"
-                            android:textColor="@color/dark_charcoal"/>
+                            android:textColor="@color/textPrimary"/>
                     </LinearLayout>
 
                     <!-- LOGIN FIELDS -->
@@ -173,13 +181,14 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="12dp"
-                            app:boxStrokeColor="@color/rich_gold">
+                            app:boxStrokeColor="@color/stroke">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etEmailLogin"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/email" />
+                                android:hint="@string/email"
+                                android:textColor="@color/textPrimary"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -188,16 +197,17 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="12dp"
                             app:passwordToggleEnabled="true"
-                            app:boxStrokeColor="@color/rich_gold">
+                            app:boxStrokeColor="@color/stroke">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etPasswordLogin"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="textPassword"
-                                android:hint="@string/password" />
+                                android:hint="@string/password"
+                                android:textColor="@color/textPrimary"/>
                         </com.google.android.material.textfield.TextInputLayout>
-                        
+
                         <Spinner
                             android:id="@+id/spinnerLogin"
                             android:layout_width="match_parent"
@@ -209,7 +219,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/keep_me_logged_in"
-                            android:textColor="@color/dark_charcoal"/>
+                            android:textColor="@color/textPrimary"/>
                     </LinearLayout>
 
                     <!-- SUBMIT BUTTON -->
@@ -218,9 +228,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:layout_marginTop="16dp"
-                        android:backgroundTint="@color/rich_gold"
+                        android:backgroundTint="@color/buttonBackground"
                         android:text="@string/sign_up"
-                        android:textColor="@color/white"
+                        android:textColor="@color/buttonText"
                         android:textSize="18sp"/>
 
                     <!-- TOGGLE TEXT -->
@@ -231,7 +241,7 @@
                         android:layout_gravity="center_horizontal"
                         android:padding="10dp"
                         android:text="@string/have_an_account_login"
-                        android:textColor="@color/soft_gold" />
+                        android:textColor="@color/textSecondary" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>

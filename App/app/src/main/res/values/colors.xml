@@ -7,4 +7,33 @@
     <color name="light_grey">#BDBDBD</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="red">#FF0000</color>
+    <color name="card_bg">#FFFFFF</color>
+    <color name="text_primary">#2C2C2C</color>
+    <color name="text_secondary">#BDBDBD</color>
+    <color name="button_text">#FFFFFF</color>
+    <color name="text_tertiary">#757575</color>
+    <color name="button_text1">#FFFFFF</color>
+        <!-- Background -->
+        <color name="settings_bg">#FFFFFF</color>
+
+        <!-- Switch text -->
+        <color name="switch_text">#000000</color>
+
+        <!-- Delete button background -->
+        <color name="delete_btn_bg">#FF0000</color>
+
+        <!-- Delete button text -->
+    <color name="delete_btn_text">#FFFFFF</color>
+    <color name="card_stroke">#CCCCCC</color>
+    <color name="background">#F5F5DC</color>
+    <color name="cardBackground">#FFFFFF</color>
+    <color name="stroke">#CCCCCC</color>
+    <color name="textPrimary">#2C2C2C</color>
+    <color name="textSecondary">#D4AF37</color>
+    <color name="buttonBackground">#B8860B</color>
+    <color name="buttonText">#FFFFFF</color>
+    <color name="search">#FFFFFF</color>
+    <color name="image_placeholder">#E0E0E0</color>
+
 </resources>
