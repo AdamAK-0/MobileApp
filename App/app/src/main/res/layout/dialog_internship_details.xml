@@ -168,7 +168,7 @@
                 android:id="@+id/btnDialogApply"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Apply"
+                android:text="@string/apply"
                 android:layout_marginTop="18dp"
                 android:backgroundTint="@color/rich_gold"
                 android:textColor="@android:color/white" />

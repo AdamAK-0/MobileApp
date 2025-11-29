@@ -76,7 +76,7 @@
                 android:id="@+id/tvApplicationStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Status: Not applied"
+                android:text="@string/status_not_applied"
                 android:textSize="12sp"
                 android:textColor="@color/light_grey"
                 android:layout_marginTop="4dp"
@@ -97,7 +97,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginEnd="8dp"
-    android:text="Apply"
+    android:text="@string/apply"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:textAllCaps="false"
@@ -111,7 +111,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_edit"
-                android:contentDescription="Edit Internship"
+                android:contentDescription="@string/edit_internship"
                 android:layout_marginEnd="16dp"
                 card_view:tint="@color/soft_gold" />
 
@@ -120,7 +120,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_delete"
-                android:contentDescription="Delete Internship"
+                android:contentDescription="@string/delete_internship"
                 card_view:tint="@android:color/holo_red_dark" />
         </LinearLayout>
 

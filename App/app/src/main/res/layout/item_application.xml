@@ -17,7 +17,7 @@
             android:id="@+id/tvApplicantName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Applicant Name"
+            android:text="@string/applicant_name"
             android:textStyle="bold"
             android:textSize="16sp" />
 
@@ -25,7 +25,7 @@
             android:id="@+id/tvApplicantEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Email"
+            android:text="@string/email"
             android:textSize="14sp"
             android:layout_marginTop="2dp" />
 
@@ -33,7 +33,7 @@
             android:id="@+id/tvAppliedAt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Applied at"
+            android:text="@string/applied_at"
             android:textSize="12sp"
             android:textColor="@android:color/darker_gray"
             android:layout_marginTop="2dp" />
@@ -60,21 +60,21 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Status: applied"
+                android:text="@string/status_applied"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnMarkInReview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="In review"
+                android:text="@string/in_review"
                 android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/btnMarkAccepted"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Accept"
+                android:text="@string/accept"
                 android:textAllCaps="false"
                 android:layout_marginStart="4dp" />
 
@@ -82,7 +82,7 @@
                 android:id="@+id/btnMarkRejected"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Reject"
+                android:text="@string/reject"
                 android:textAllCaps="false"
                 android:layout_marginStart="4dp" />
         </LinearLayout>

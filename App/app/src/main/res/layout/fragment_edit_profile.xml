@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cream_white"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Profile image + choose -->
+        <ImageView
+            android:id="@+id/imgNewPhoto"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_user"
+            android:contentDescription="Profile photo"
+            android:background="@drawable/round_gray"
+            android:padding="4dp"/>
+
+        <TextView
+            android:id="@+id/tvChangePhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tap image to change"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            android:textColor="@color/dark_charcoal"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="12dp" />
+
+        <!-- User fields group -->
+        <LinearLayout
+            android:id="@+id/group_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/etFirst"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="First name" />
+
+            <EditText
+                android:id="@+id/etMiddle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Middle name"
+                android:layout_marginTop="8dp" />
+
+            <EditText
+                android:id="@+id/etLast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Last name"
+                android:layout_marginTop="8dp" />
+
+            <EditText
+                android:id="@+id/etBirth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Birth year"
+                android:inputType="number"
+                android:layout_marginTop="8dp" />
+
+            <EditText
+                android:id="@+id/passv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/password"
+                android:inputType="textEmailAddress"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <!-- Company fields group (same layout, hide/show from code) -->
+        <LinearLayout
+            android:id="@+id/group_company"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="8dp">
+
+            <EditText
+                android:id="@+id/etCompanyName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Company name" />
+
+            <EditText
+                android:id="@+id/passv2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/password"
+                android:inputType="textEmailAddress"
+                android:layout_marginTop="8dp" />
+
+            <EditText
+                android:id="@+id/etDesc"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:hint="Description"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:backgroundTint="@color/rich_gold"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+</ScrollView>

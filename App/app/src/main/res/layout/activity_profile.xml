@@ -18,12 +18,18 @@
             android:src="@drawable/ic_user"
             android:background="@drawable/round_gray"
             android:padding="10dp" />
-
+        <ImageView
+            android:id="@+id/btnEdit"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_edit"
+            android:layout_gravity="end"
+            android:layout_margin="10dp"/>
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Profile"
+            android:text="@string/profile"
             android:textSize="22sp"
             android:textStyle="bold"
             android:layout_marginTop="20dp"
@@ -35,19 +41,19 @@
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Name" />
+            android:text="@string/name" />
 
         <TextView
             android:id="@+id/tvEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Email" />
+            android:text="@string/email" />
 
         <TextView
             android:id="@+id/tvCreated"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Created at" />
+            android:text="@string/created_at" />
 
         <TextView
             android:id="@+id/tvExtra1"
@@ -66,6 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="" />
+
     </LinearLayout>
 
 </ScrollView>

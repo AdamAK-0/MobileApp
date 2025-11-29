@@ -38,7 +38,7 @@
             android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:background="@drawable/bg_dropdown"
-            android:hint="Status"
+            android:hint="@string/status"
             android:padding="10dp"
             android:inputType="none"
             android:focusable="false"
