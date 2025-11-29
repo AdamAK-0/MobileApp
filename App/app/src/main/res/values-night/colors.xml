@@ -1,10 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="rich_gold">#B8860B</color>
-    <color name="soft_gold">#D4AF37</color>
-    <color name="cream_white">#F5F5DC</color>
-    <color name="dark_charcoal">#2C2C2C</color>
-    <color name="light_grey">#BDBDBD</color>
-    <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
+    <!-- Accent colors remain similar but slightly brighter for contrast -->
+    <color name="rich_gold">#FFD700</color>
+    <color name="soft_gold">#FFEB99</color>
+
+    <!-- Background and primary surfaces -->
+    <color name="cream_white">#121212</color> <!-- dark background -->
+    <color name="dark_charcoal">#1E1E1E</color> <!-- secondary dark surface -->
+
+    <!-- Text & icons -->
+    <color name="light_grey">#B0B0B0</color> <!-- lighter grey for text on dark -->
+    <color name="white">#FFFFFF</color> <!-- for bright highlights -->
+    <color name="black">#000000</color> <!-- optional, usually unused on dark -->
+    <color name="search">#000000</color>
+    <!-- Alerts / danger -->
+    <color name="red">#FF5252</color> <!-- slightly softer red on dark -->
+    <color name="card_bg">#1E1E1E</color>
+    <color name="text_primary">#E0E0E0</color>
+    <color name="text_secondary">#B0B0B0</color>
+    <color name="button_text">#FFFFFF</color>
+    <color name="text_tertiary">#A0A0A0</color>
+    <color name="button_text1">#000000</color>
+        <!-- Dark mode background -->
+        <!-- Settings Fragment Dark Mode Colors -->
+        <!-- Background -->
+        <color name="settings_bg">#1E1E1E</color>
+
+        <!-- Switch text -->
+        <color name="switch_text">#E0E0E0</color>
+
+        <!-- Delete button background -->
+        <color name="delete_btn_bg">#FF5252</color>
+
+        <!-- Delete button text -->
+        <color name="delete_btn_text">#000000</color>
+    <color name="card_stroke">#555555</color>
+    <color name="background">#1E1E1E</color>
+    <color name="cardBackground">#2C2C2C</color>
+    <color name="stroke">#555555</color>
+    <color name="textPrimary">#E0E0E0</color>
+    <color name="textSecondary">#FFD700</color>
+    <color name="buttonBackground">#FFD700</color>
+    <color name="buttonText">#000000</color>
 </resources>

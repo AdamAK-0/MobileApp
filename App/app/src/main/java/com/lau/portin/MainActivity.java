@@ -1,5 +1,6 @@
 package com.lau.portin;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.icu.util.Calendar;
@@ -15,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
 import android.view.View;
 import android.widget.ArrayAdapter;
 
@@ -44,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
     boolean isSignup = true;
     SharedPreferences prefs;
+    SharedPreferences prefs2;
+
     public static final String BASE_URL = "http://10.0.2.2/portin/";
 
     @Override
@@ -66,6 +71,13 @@ public class MainActivity extends AppCompatActivity {
         tilConfirm.setLayoutParams(params);
         setupSpinner();
         loadSavedLogin();
+//        prefs2 = getSharedPreferences("settings", Context.MODE_PRIVATE);
+//
+//        // Load dark mode preference
+//        boolean darkMode = prefs2.getBoolean("dark_mode", false);
+//        AppCompatDelegate.setDefaultNightMode(darkMode ?
+//                AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+
         if(!prefs.getString("email", "").isEmpty()) {
             isSignup = false;
             findViewById(R.id.signupLayout).setVisibility(View.GONE);

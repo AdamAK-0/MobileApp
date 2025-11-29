@@ -56,6 +56,16 @@ public class BaseFragmentActivity extends AppCompatActivity {
                     return true;
 
             }
+                else if(item.getItemId() == R.id.nav_settings){
+                    SettingsFragment fragment = new SettingsFragment();
+                    Bundle b = new Bundle();
+                    b.putString("type", type);
+                    b.putSerializable("user", currentUser);
+                    b.putSerializable("company", company);
+                    fragment.setArguments(b);
+                    loadFragment(fragment);
+                    return true;
+            }
             return false;
         });
     }
