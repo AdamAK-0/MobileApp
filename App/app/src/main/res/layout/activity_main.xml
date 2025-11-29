@@ -48,7 +48,7 @@
                                 android:id="@+id/etName"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="First Name" />
+                                android:hint="@string/first_name" />
                         </com.google.android.material.textfield.TextInputLayout>
                         
                         <com.google.android.material.textfield.TextInputLayout
@@ -63,7 +63,7 @@
                                 android:id="@+id/etMiddle"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Middle Name" />
+                                android:hint="@string/middle_name" />
                         </com.google.android.material.textfield.TextInputLayout>
                         
                         <com.google.android.material.textfield.TextInputLayout
@@ -78,7 +78,7 @@
                                 android:id="@+id/etLast"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Last Name" />
+                                android:hint="@string/last_name" />
                         </com.google.android.material.textfield.TextInputLayout>
                         
                         <com.google.android.material.textfield.TextInputLayout
@@ -94,7 +94,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="number"
-                                android:hint="Birth Year" />
+                                android:hint="@string/birth_year" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -109,7 +109,7 @@
                                 android:id="@+id/etEmailSignup"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Email" />
+                                android:hint="@string/email" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -126,7 +126,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="textPassword"
-                                android:hint="Password" />
+                                android:hint="@string/password" />
                         </com.google.android.material.textfield.TextInputLayout>
                         
                         <com.google.android.material.textfield.TextInputLayout
@@ -142,7 +142,7 @@
                                 android:id="@+id/etConfirmSignup"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Confirm Password"
+                                android:hint="@string/confirm_password"
                                 android:inputType="textPassword" />
                         </com.google.android.material.textfield.TextInputLayout>
                         
@@ -156,7 +156,7 @@
                             android:id="@+id/rememberSignup"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Remember me"
+                            android:text="@string/remember_me"
                             android:textColor="@color/dark_charcoal"/>
                     </LinearLayout>
 
@@ -179,7 +179,7 @@
                                 android:id="@+id/etEmailLogin"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Email" />
+                                android:hint="@string/email" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -195,7 +195,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="textPassword"
-                                android:hint="Password" />
+                                android:hint="@string/password" />
                         </com.google.android.material.textfield.TextInputLayout>
                         
                         <Spinner
@@ -208,7 +208,7 @@
                             android:id="@+id/rememberLogin"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Keep me logged in"
+                            android:text="@string/keep_me_logged_in"
                             android:textColor="@color/dark_charcoal"/>
                     </LinearLayout>
 
@@ -219,7 +219,7 @@
                         android:layout_height="60dp"
                         android:layout_marginTop="16dp"
                         android:backgroundTint="@color/rich_gold"
-                        android:text="Sign Up"
+                        android:text="@string/sign_up"
                         android:textColor="@color/white"
                         android:textSize="18sp"/>
 
@@ -230,7 +230,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:padding="10dp"
-                        android:text="Have an account? Login"
+                        android:text="@string/have_an_account_login"
                         android:textColor="@color/soft_gold" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

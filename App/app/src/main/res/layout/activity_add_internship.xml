@@ -27,13 +27,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Select Image"
+            android:text="@string/select_image"
             android:layout_marginBottom="20dp" />
 
         <!-- Internship Name -->
         <EditText
             android:id="@+id/internName"
-            android:hint="Internship Name"
+            android:hint="@string/internship_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp" />
@@ -41,7 +41,7 @@
         <!-- Description -->
         <EditText
             android:id="@+id/internDesc"
-            android:hint="Description"
+            android:hint="@string/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minLines="3"
@@ -51,7 +51,7 @@
         <!-- Start Date -->
         <EditText
             android:id="@+id/internStart"
-            android:hint="Start Date (YYYY-MM-DD)"
+            android:hint="@string/start_date_yyyy_mm_dd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusable="false"
@@ -61,7 +61,7 @@
         <!-- End Date -->
         <EditText
             android:id="@+id/internEnd"
-            android:hint="End Date (YYYY-MM-DD)"
+            android:hint="@string/end_date_yyyy_mm_dd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusable="false"
@@ -78,7 +78,7 @@
         <!-- Max Slots -->
         <EditText
             android:id="@+id/internSlots"
-            android:hint="Max Slots"
+            android:hint="@string/max_slots"
             android:inputType="number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -87,7 +87,7 @@
         <!-- Submit -->
         <Button
             android:id="@+id/btnSubmit"
-            android:text="Add Internship"
+            android:text="@string/add_internship"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp" />

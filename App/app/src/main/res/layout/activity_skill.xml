@@ -15,13 +15,13 @@
 
         <Button
             android:id="@+id/btnUpload"
-            android:text="Upload Syllabus (PDF)"
+            android:text="@string/upload_syllabus_pdf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <Button
             android:id="@+id/btnTranscript"
-            android:text="Upload Transcript (.txt)"
+            android:text="@string/upload_transcript_txt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"/>
@@ -29,7 +29,7 @@
 
         <Button
             android:id="@+id/btnExtract"
-            android:text="Extract Skills"
+            android:text="@string/extract_skills"
             android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
