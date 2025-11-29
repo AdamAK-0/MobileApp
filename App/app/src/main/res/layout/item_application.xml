@@ -38,6 +38,16 @@
             android:textColor="@android:color/darker_gray"
             android:layout_marginTop="2dp" />
 
+        <Button
+            android:id="@+id/btnViewCv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View CV (PDF)"
+            android:textAllCaps="false"
+            android:backgroundTint="@color/soft_gold"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="8dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
