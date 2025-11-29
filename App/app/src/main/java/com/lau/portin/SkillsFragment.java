@@ -195,6 +195,7 @@ public class SkillsFragment extends Fragment {
                         if (c.code.toLowerCase().equals(code.toLowerCase().replace(" ","")) || c.code.toLowerCase().equals(code.toLowerCase()) || c.title.toLowerCase().equals(title.toLowerCase())) {
                             for(int i = 0; i < skillsArr.length(); i++) {
                                 skillsArr.put(i, skillsArr.optString(i) + " (" + gradeToPercent(c.grade) + "%)");
+                                Log.d("SkillsFragment", "Grade: " + c.grade);
                             }
                             break;
                         }
@@ -243,41 +244,48 @@ public class SkillsFragment extends Fragment {
         String[] lines = raw.split("\n");
         for (int i = 0; i < lines.length; i++) {
             String line = lines[i].trim();
-            // Match course code: e.g., CSC243, CSC 243, CSC243B
-            if (!line.matches("^[A-Z]{2,4}\\s*\\d{3}[A-Z]?\\b.*")) continue;
+            if (!line.matches("^[A-Z]{2,4}\\s*\\d{3}[A-Z]?(\\s|\\t).*")) continue;
 
             CourseGrade c = new CourseGrade();
 
-            // Split by spaces
             String[] parts = line.split("\\s+");
 
-            // Code is first two parts if second part is number, otherwise first part
+            // Detect course code
             if (parts.length >= 2 && parts[1].matches("\\d{3}[A-Z]?")) {
                 c.code = parts[0] + parts[1];
-                // Title is everything after level column if present
+
                 int titleIndex = 2;
                 if (parts.length > 2 && parts[2].equalsIgnoreCase("UG")) {
                     titleIndex = 3;
                 }
-                StringBuilder title = new StringBuilder();
-                for (int j = titleIndex; j < parts.length; j++) {
-                    title.append(parts[j]).append(" ");
+
+                // Try to detect grade at end
+                String last = parts[parts.length - 1];
+                if (last.matches("^(A|B|C|D|F|T)[+-]?$")) {
+                    c.grade = last;
+                    // title excludes the grade
+                    StringBuilder title = new StringBuilder();
+                    for (int j = titleIndex; j < parts.length - 1; j++) {
+                        title.append(parts[j]).append(" ");
+                    }
+                    c.title = title.toString().trim();
+                } else {
+                    // No grade found, fallback to T
+                    c.grade = "T";
+                    StringBuilder title = new StringBuilder();
+                    for (int j = titleIndex; j < parts.length; j++) {
+                        title.append(parts[j]).append(" ");
+                    }
+                    c.title = title.toString().trim();
                 }
-                c.title = title.toString().trim();
+
             } else {
+                // Code + title fallback
                 c.code = parts[0];
                 c.title = parts.length > 1 ? parts[1] : "";
+                c.grade = "T";
             }
-
-            // Grade might be on the **next line**
-            String gradeLine = (i + 1 < lines.length) ? lines[i + 1].trim() : "";
-            if (gradeLine.matches("^[A-F][+-]?$|^T$")) {
-                c.grade = gradeLine;
-                i++; // skip next line because we used it as grade
-            } else {
-                c.grade = "T"; // fallback
-            }
-
+        Log.d("SkillsFragment", "Course: " + c.code + ", " + c.title + ", " + c.grade);
             c.percent = gradeToPercent(c.grade);
             list.add(c);
         }
