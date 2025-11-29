@@ -98,6 +98,7 @@ public class InternshipDetailsDialog extends DialogFragment {
         // If anything goes wrong (JSON error / network error) we now FALL BACK to "Apply"
         apply.setEnabled(false);
         apply.setText("Checking...");
+        btnPickCv.setEnabled(false);
         if (currentUser != null && "User".equals(type)) {
             loadApplicationStatus(internship.getId(), currentUser.getUser_id(), h, apply);
         } else {
@@ -211,6 +212,7 @@ public class InternshipDetailsDialog extends DialogFragment {
 
                         if (applied) {
                             String statusCode = obj.optString("status", "applied");
+                            btnPickCv.setText("Uploaded");
                             if (h != null && h.btnApply != null) {
                                 h.btnApply.setEnabled(false);
                                 h.btnApply.setText(prettifyStatusShort(statusCode));
@@ -227,6 +229,7 @@ public class InternshipDetailsDialog extends DialogFragment {
                         } else {
                             // Not applied yet -> check if slots are full
                             if (internship.getSlots() >= internship.getMaxSlots()) {
+                                btnPickCv.setText("Full");
                                 // FULL
                                 if (h != null && h.btnApply != null) {
                                     h.btnApply.setEnabled(false);
@@ -243,6 +246,8 @@ public class InternshipDetailsDialog extends DialogFragment {
                                 }
                             } else {
                                 // AVAILABLE -> should show Apply (this is the normal case)
+                                btnPickCv.setEnabled(true);
+                                btnPickCv.setText("Upload");
                                 if (h != null && h.btnApply != null) {
                                     h.btnApply.setEnabled(true);
                                     h.btnApply.setText("Apply");
