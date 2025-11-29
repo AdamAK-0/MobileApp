@@ -121,7 +121,8 @@ public class CompanyApplicationsActivity extends AppCompatActivity {
                                     o.getString("user_email"),
                                     o.getString("status"),
                                     o.getString("applied_at"),
-                                    o.optString("user_photo", "")
+                                    o.optString("user_photo", ""),
+                                    o.optString("cv_url", "")
                             ));
                         }
                         applyFilters();

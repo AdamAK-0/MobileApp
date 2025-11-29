@@ -202,12 +202,24 @@ public class InternshipAdapter extends RecyclerView.Adapter<InternshipAdapter.Vi
                                 i.setStatus(statusCode);
                             }
                         } else {
-                            // Not applied yet
-                            h.btnApply.setEnabled(true);
-                            h.btnApply.setText("Apply");
-                            i.setStatus("apply");
-                            if (h.tvApplicationStatus != null) {
-                                h.tvApplicationStatus.setVisibility(View.GONE);
+                            // Not applied yet -> check if slots are full
+                            if (i.getSlots() >= i.getMaxSlots()) {
+                                // No available slots
+                                h.btnApply.setEnabled(false);
+                                h.btnApply.setText("Slots full");
+                                i.setStatus("slots_full");
+                                if (h.tvApplicationStatus != null) {
+                                    h.tvApplicationStatus.setVisibility(View.VISIBLE);
+                                    h.tvApplicationStatus.setText("Slots are full");
+                                }
+                            } else {
+                                // Slots available -> normal apply state
+                                h.btnApply.setEnabled(true);
+                                h.btnApply.setText("Apply");
+                                i.setStatus("apply");
+                                if (h.tvApplicationStatus != null) {
+                                    h.tvApplicationStatus.setVisibility(View.GONE);
+                                }
                             }
                         }
                     } catch (JSONException e) {

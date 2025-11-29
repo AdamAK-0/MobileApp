@@ -9,15 +9,17 @@ public class Application implements Serializable {
     private String status;
     private String appliedAt;
     private String userPhoto;
+    private String cvUrl;
 
     public Application(int applicationId, String userName, String userEmail,
-                       String status, String appliedAt, String userPhoto) {
+                       String status, String appliedAt, String userPhoto, String cvUrl) {
         this.applicationId = applicationId;
         this.userName = userName;
         this.userEmail = userEmail;
         this.status = status;
         this.appliedAt = appliedAt;
         this.userPhoto = userPhoto;
+        this.cvUrl = cvUrl;
     }
 
     public int getApplicationId() {
@@ -46,5 +48,9 @@ public class Application implements Serializable {
 
     public String getUserPhoto() {
         return userPhoto;
+    }
+
+    public String getCvUrl() {
+        return cvUrl;
     }
 }

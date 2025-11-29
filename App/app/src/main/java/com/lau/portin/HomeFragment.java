@@ -226,7 +226,23 @@ public class HomeFragment extends Fragment {
         ArrayList<Internship> filtered = new ArrayList<>();
         for (Internship i : list) {
             boolean matchSearch = i.getName().toLowerCase().contains(searchBar.getQuery().toString().toLowerCase());
-            boolean matchStatus = selectedStatus.isEmpty() || i.status.equals(selectedStatus);
+
+            // Status filter:
+            // - "" (all): show everything
+            // - "apply": only show internships that are still available to apply
+            //            (user has not applied yet AND slots are not full)
+            // - other statuses: match the internship status directly
+            boolean matchStatus;
+            if (selectedStatus.isEmpty()) {
+                matchStatus = true;
+            } else if ("apply".equals(selectedStatus)) {
+                boolean hasSlots = i.getSlots() < i.getMaxSlots();
+                boolean canApply = "apply".equals(i.getStatus());
+                matchStatus = canApply && hasSlots;
+            } else {
+                matchStatus = selectedStatus.equals(i.getStatus());
+            }
+
             boolean matchMode = selectedMode.isEmpty() || i.type.equalsIgnoreCase(selectedMode);
             if (matchSearch && matchStatus && matchMode) filtered.add(i);
         }
