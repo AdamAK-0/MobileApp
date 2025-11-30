@@ -64,14 +64,50 @@
                 android:textColor="@color/text_tertiary"
                 android:layout_marginTop="4dp" />
 
-            <!-- Rating -->
+            <!-- Rating (average + stars) -->
             <TextView
                 android:id="@+id/tvDialogRating"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:textColor="@color/text_secondary"
-                android:layout_marginTop="6dp" />
+                android:layout_marginTop="6dp"
+                android:text="Rating: loading..." />
+
+            <LinearLayout
+                android:id="@+id/layoutRatingBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp">
+
+                <RatingBar
+                    android:id="@+id/ratingBarCompany"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:numStars="5"
+                    android:stepSize="0.1"
+                    android:isIndicator="false"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/tvDialogRatingValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_secondary"
+                    android:text="0.0 / 5 (0 ratings)" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnSubmitRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Submit Rating"
+                android:backgroundTint="@color/rich_gold"
+                android:textColor="@color/delete_btn_text" />
 
             <!-- Dates -->
             <TextView

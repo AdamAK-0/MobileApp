@@ -124,7 +124,7 @@
             android:layout_height="wrap_content"
             android:text="Save"
             android:backgroundTint="@color/rich_gold"
-            android:textColor="@android:color/white" />
+            android:textColor="@color/delete_btn_text" />
 
     </LinearLayout>
 </ScrollView>
