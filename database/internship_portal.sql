@@ -38,7 +38,7 @@ CREATE TABLE company_ratings (
     rating_id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     user_id INT NOT NULL,
-    rating TINYINT NOT NULL,
+    rating FLOAT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY unique_user_company (company_id, user_id),
     FOREIGN KEY (company_id) REFERENCES companies(company_id) ON DELETE CASCADE,
