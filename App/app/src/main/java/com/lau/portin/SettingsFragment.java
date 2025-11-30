@@ -67,7 +67,15 @@ public class SettingsFragment extends Fragment {
         });
 
         // Delete account
-        btnDeleteAccount.setOnClickListener(v1 -> deleteAccount());
+        btnDeleteAccount.setOnClickListener(v1 -> {
+            new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Delete Account")
+                    .setMessage("Are you sure you want to delete your account? This action cannot be undone.")
+                    .setPositiveButton("Delete", (dialog, which) -> deleteAccount())
+                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                    .show();
+        });
+
 
         return v;
     }
