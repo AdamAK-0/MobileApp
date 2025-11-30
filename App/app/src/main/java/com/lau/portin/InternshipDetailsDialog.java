@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
@@ -86,6 +87,8 @@ public class InternshipDetailsDialog extends DialogFragment {
         TextView dates = v.findViewById(R.id.tvDialogDates);
         TextView slots = v.findViewById(R.id.tvDialogSlots);
         TextView created = v.findViewById(R.id.tvDialogCreated);
+        Button btnViewCompanyProfile = v.findViewById(R.id.btnViewCompanyProfile);
+
 
         // CV layout views (for the card)
         cvLayout = v.findViewById(R.id.layoutCvUpload);
@@ -99,6 +102,23 @@ public class InternshipDetailsDialog extends DialogFragment {
 
         name.setText(internship.getName());
         company.setText(internship.getCompanyName());
+
+        // Make company name clickable so students can view the company profile
+        company.setPaintFlags(company.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        View.OnClickListener companyProfileClick = v1 -> {
+            if (getContext() == null) return;
+            Intent intent = new Intent(getContext(), ProfileActivity.class);
+            intent.putExtra("type", "Company");
+            intent.putExtra("company_id", internship.getCompany_id());
+            startActivity(intent);
+        };
+        company.setOnClickListener(companyProfileClick);
+
+        // Also support explicit "View profile" button for clarity
+        if (btnViewCompanyProfile != null) {
+            btnViewCompanyProfile.setOnClickListener(companyProfileClick);
+        }
+
         typeTv.setText(internship.getType());
         desc.setText(internship.getDescription());
         // Initial rating info; will be updated from server

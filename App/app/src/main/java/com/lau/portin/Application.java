@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class Application implements Serializable {
     private int applicationId;
+    private int userId;
     private String userName;
     private String userEmail;
     private String status;
@@ -11,9 +12,10 @@ public class Application implements Serializable {
     private String userPhoto;
     private String cvUrl;
 
-    public Application(int applicationId, String userName, String userEmail,
+    public Application(int applicationId, int userId, String userName, String userEmail,
                        String status, String appliedAt, String userPhoto, String cvUrl) {
         this.applicationId = applicationId;
+        this.userId = userId;
         this.userName = userName;
         this.userEmail = userEmail;
         this.status = status;
@@ -24,6 +26,10 @@ public class Application implements Serializable {
 
     public int getApplicationId() {
         return applicationId;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 
     public String getUserName() {

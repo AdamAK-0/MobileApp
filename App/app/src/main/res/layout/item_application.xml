@@ -33,6 +33,16 @@
             android:layout_marginTop="2dp"
             android:textColor="@color/text_secondary"/>
 
+        <Button
+            android:id="@+id/btnViewProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/view_profile"
+            android:textAllCaps="false"
+            android:backgroundTint="@color/light_grey"
+            android:textColor="@color/button_text1"/>
+
         <TextView
             android:id="@+id/tvAppliedAt"
             android:layout_width="wrap_content"

@@ -34,7 +34,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvApplicantName, tvApplicantEmail, tvAppliedAt, tvStatus;
-        Button btnInReview, btnAccepted, btnRejected, btnViewCv;
+        Button btnInReview, btnAccepted, btnRejected, btnViewCv, btnViewProfile;
 
         public ViewHolder(View v) {
             super(v);
@@ -46,6 +46,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
             btnAccepted = v.findViewById(R.id.btnMarkAccepted);
             btnRejected = v.findViewById(R.id.btnMarkRejected);
             btnViewCv = v.findViewById(R.id.btnViewCv);
+            btnViewProfile = v.findViewById(R.id.btnViewProfile);
         }
     }
 
@@ -64,6 +65,28 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
         h.tvApplicantEmail.setText(a.getUserEmail());
         h.tvAppliedAt.setText("Applied at: " + a.getAppliedAt());
         h.tvStatus.setText("Status: " + a.getStatus());
+
+        // View applicant profile
+        if (h.btnViewProfile != null) {
+            h.btnViewProfile.setOnClickListener(v -> {
+                Intent intent = new Intent(context, ProfileActivity.class);
+                intent.putExtra("type", "User");
+                intent.putExtra("user_id", a.getUserId());
+                context.startActivity(intent);
+            });
+        }
+
+        // Allow company to tap the applicant name to view full profile
+        h.tvApplicantName.setOnClickListener(v -> {
+            if (a.getUserId() <= 0) {
+                Toast.makeText(context, "User profile not available", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Intent intent = new Intent(context, ProfileActivity.class);
+            intent.putExtra("type", "User");
+            intent.putExtra("user_id", a.getUserId());
+            context.startActivity(intent);
+        });
 
         View.OnClickListener listener = v -> {
             String newStatus;

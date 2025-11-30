@@ -117,6 +117,7 @@ public class CompanyApplicationsActivity extends AppCompatActivity {
                             JSONObject o = arr.getJSONObject(i);
                             fullList.add(new Application(
                                     o.getInt("application_id"),
+                                    o.getInt("user_id"),
                                     o.getString("user_name"),
                                     o.getString("user_email"),
                                     o.getString("status"),

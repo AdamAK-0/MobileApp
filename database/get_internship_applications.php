@@ -13,6 +13,7 @@ $internship_id = mysqli_real_escape_string($con, $_GET['internship_id']);
 $query = "
 SELECT 
     ua.application_id,
+    ua.user_id,
     ua.status,
     ua.applied_at,
     ua.cv_path AS cv_url,
