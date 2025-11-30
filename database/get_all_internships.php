@@ -7,6 +7,7 @@ $query = "
     SELECT 
         i.*,
         c.name AS company_name,
+        c.rating AS company_rating,
         COALESCE(active_apps.active_count, 0) AS slots
     FROM internships i
     JOIN companies c 
@@ -27,8 +28,12 @@ $result = mysqli_query($con, $query);
 $internships = array();
 
 while ($row = mysqli_fetch_assoc($result)) {
+    if (isset($row['company_rating'])) {
+        $row['rating'] = (float)$row['company_rating'];
+    }
     $internships[] = $row;
 }
+
 
 echo json_encode($internships);
 ?>

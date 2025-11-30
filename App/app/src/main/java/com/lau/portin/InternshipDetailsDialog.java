@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.RatingBar;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -29,6 +30,7 @@ import org.json.JSONObject;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Locale;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -49,6 +51,15 @@ public class InternshipDetailsDialog extends DialogFragment {
 
     private TextView tvCvFileName;
     private Button btnPickCv;
+    private View cvLayout;
+
+    // Rating UI
+    private TextView tvRatingLabel;
+    private TextView tvRatingValue;
+    private RatingBar ratingBar;
+    private Button btnSubmitRating;
+
+    private boolean canRate = false;
 
     public InternshipDetailsDialog(Internship internship, User currentUser, String type, InternshipAdapter.ViewHolder h) {
         this.internship = internship;
@@ -68,13 +79,16 @@ public class InternshipDetailsDialog extends DialogFragment {
         TextView typeTv = v.findViewById(R.id.tvDialogType);
         TextView desc = v.findViewById(R.id.tvDialogDescription);
         Button apply = v.findViewById(R.id.btnDialogApply);
-        TextView rating = v.findViewById(R.id.tvDialogRating);
+        tvRatingLabel = v.findViewById(R.id.tvDialogRating);
+        ratingBar = v.findViewById(R.id.ratingBarCompany);
+        tvRatingValue = v.findViewById(R.id.tvDialogRatingValue);
+        btnSubmitRating = v.findViewById(R.id.btnSubmitRating);
         TextView dates = v.findViewById(R.id.tvDialogDates);
         TextView slots = v.findViewById(R.id.tvDialogSlots);
         TextView created = v.findViewById(R.id.tvDialogCreated);
 
         // CV layout views (for the card)
-        View cvLayout = v.findViewById(R.id.layoutCvUpload);
+        cvLayout = v.findViewById(R.id.layoutCvUpload);
         tvCvFileName = v.findViewById(R.id.tvCvFileName);
         btnPickCv = v.findViewById(R.id.btnPickCv);
 
@@ -87,7 +101,11 @@ public class InternshipDetailsDialog extends DialogFragment {
         company.setText(internship.getCompanyName());
         typeTv.setText(internship.getType());
         desc.setText(internship.getDescription());
-        rating.setText("Rating: " + internship.getRating() + "/5");
+        // Initial rating info; will be updated from server
+        tvRatingLabel.setText("Rating");
+        tvRatingValue.setText("Loading rating...");
+        ratingBar.setRating(0f);
+        setupRatingSection();
 
         dates.setText("Duration: " + internship.getStartDate() + " \u2192 " + internship.getEndDate());
         slots.setText("Slots: " + internship.getSlots() + "/" + internship.getMaxSlots());
@@ -198,6 +216,209 @@ public class InternshipDetailsDialog extends DialogFragment {
         Volley.newRequestQueue(getContext()).add(req);
     }
 
+
+    // ===== COMPANY RATING (average + user rating) =====
+    private void setupRatingSection() {
+        // If rating UI is not in the layout for some reason, just skip.
+        if (ratingBar == null || tvRatingValue == null || tvRatingLabel == null) return;
+
+        // Company account: can see average rating, cannot rate.
+        if (!"User".equals(type)) {
+            ratingBar.setIsIndicator(true);
+            if (btnSubmitRating != null) {
+                btnSubmitRating.setVisibility(View.GONE);
+            }
+            // Pure viewer mode for companies
+            loadCompanyRating(internship.getCompany_id(), 0);
+        } else if (currentUser != null) {
+            // Student account
+            if (canRate) {
+                // Accepted student: pure rater mode (LinkedIn-style)
+                // They see only stars to choose a rating, no numeric average.
+                if (tvRatingLabel != null) {
+                    tvRatingLabel.setText("Rate this company");
+                }
+                if (tvRatingValue != null) {
+                    tvRatingValue.setVisibility(View.GONE);
+                }
+                ratingBar.setIsIndicator(false);
+                if (btnSubmitRating != null) {
+                    btnSubmitRating.setVisibility(View.VISIBLE);
+                }
+
+                // We still call the API to keep average updated on the backend,
+                // but on this screen we don't show it – only the student's stars.
+                loadCompanyRating(internship.getCompany_id(), currentUser.getUser_id());
+
+                if (btnSubmitRating != null) {
+                    btnSubmitRating.setOnClickListener(v -> {
+                        int value = Math.round(ratingBar.getRating());
+                        if (value < 1 || value > 5) {
+                            Toast.makeText(getContext(), "Please rate between 1 and 5 stars", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        submitCompanyRating(internship.getCompany_id(), currentUser.getUser_id(), value);
+                    });
+                }
+            } else {
+                // Student who is NOT accepted:
+                // can ONLY view the average rating, cannot change stars.
+                if (btnSubmitRating != null) {
+                    btnSubmitRating.setVisibility(View.GONE);
+                }
+                ratingBar.setIsIndicator(true);
+                loadCompanyRating(internship.getCompany_id(), 0);
+            }
+        } else {
+            // Safety: unknown user -> viewer-only
+            ratingBar.setIsIndicator(true);
+            if (btnSubmitRating != null) {
+                btnSubmitRating.setVisibility(View.GONE);
+            }
+            loadCompanyRating(internship.getCompany_id(), 0);
+        }
+    }
+
+        private void loadCompanyRating(int companyId, int userId) {
+        String url = AddInternshipActivity.BASE_URL + "get_company_rating.php";
+
+        StringRequest req = new StringRequest(
+                Request.Method.POST,
+                url,
+                response -> {
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                        if (!"success".equals(obj.optString("status"))) {
+                            return;
+                        }
+
+                        double avg = obj.optDouble("average", 0.0);
+                        int count = obj.optInt("count", 0);
+                        int userRating = obj.optInt("user_rating", 0);
+
+                        // LinkedIn-style behavior:
+                        // - If canRate == true (accepted student): this screen is for rating only.
+                        //   -> show only stars (empty by default), no numeric average.
+                        // - Otherwise: viewer mode -> show average + count and lock stars.
+                        if (canRate && "User".equals(type) && currentUser != null) {
+                            // Rater mode: hide numeric rating, show only stars for the student to choose.
+                            if (tvRatingLabel != null) {
+                                tvRatingLabel.setText("Rate this company");
+                            }
+                            if (tvRatingValue != null) {
+                                tvRatingValue.setVisibility(View.GONE);
+                            }
+                            if (ratingBar != null) {
+                                ratingBar.setIsIndicator(false);
+                                // Student should not rate "on top of" old stars (average).
+                                // Always start from empty stars; they pick their own value.
+                                ratingBar.setRating(0f);
+                            }
+                        } else {
+                            // Viewer mode (company or non-accepted student)
+                            if (tvRatingLabel != null) {
+                                tvRatingLabel.setText("Rating");
+                            }
+                            if (tvRatingValue != null) {
+                                tvRatingValue.setVisibility(View.VISIBLE);
+                                if (count > 0) {
+                                    tvRatingValue.setText(
+                                            String.format(Locale.getDefault(), "%.1f / 5 (%d ratings)", avg, count)
+                                    );
+                                } else {
+                                    tvRatingValue.setText("No ratings yet");
+                                }
+                            }
+
+                            if (ratingBar != null) {
+                                ratingBar.setIsIndicator(true);
+                                ratingBar.setRating((float) avg);
+                            }
+                        }
+
+                        // Keep internship object roughly in sync with backend average
+                        internship.rating = (int) Math.round(avg);
+
+                    } catch (JSONException e) {
+                        // Ignore parse errors, keep default UI
+                    }
+                },
+                error -> {
+                    // Silent failure is fine; UI already has a fallback
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> map = new HashMap<>();
+                map.put("company_id", String.valueOf(companyId));
+                if (userId > 0) {
+                    map.put("user_id", String.valueOf(userId));
+                }
+                return map;
+            }
+        };
+
+        // If dialog created from a ViewHolder, use its context. Otherwise use dialog context.
+        if (h != null && h.itemView != null) {
+            Volley.newRequestQueue(h.itemView.getContext()).add(req);
+        } else if (getContext() != null) {
+            Volley.newRequestQueue(getContext()).add(req);
+        }
+    }
+
+        private void submitCompanyRating(int companyId, int userId, int ratingValue) {
+        String url = AddInternshipActivity.BASE_URL + "rate_company.php";
+
+        StringRequest req = new StringRequest(
+                Request.Method.POST,
+                url,
+                response -> {
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                        String status = obj.optString("status");
+                        if ("success".equals(status)) {
+                            double avg = obj.optDouble("average", ratingValue);
+                            int count = obj.optInt("count", 1);
+
+                            // Even though accepted students don't see the numeric average on this screen,
+                            // we still keep the label text updated behind the scenes (if visible in some mode).
+                            if (!canRate && tvRatingValue != null) {
+                                tvRatingValue.setText(
+                                        String.format(Locale.getDefault(), "%.1f / 5 (%d ratings)", avg, count)
+                                );
+                            }
+                            Toast.makeText(getContext(), "Thank you for rating!", Toast.LENGTH_SHORT).show();
+                        } else if ("forbidden".equals(status)) {
+                            Toast.makeText(getContext(), "Only accepted students can rate this company", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getContext(), "Could not save rating", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        Toast.makeText(getContext(), "Unexpected response from server", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(getContext(), "Network error while rating", Toast.LENGTH_SHORT).show()
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> map = new HashMap<>();
+                map.put("company_id", String.valueOf(companyId));
+                map.put("user_id", String.valueOf(userId));
+                map.put("rating", String.valueOf(ratingValue));
+                // Tie rating permission to this specific internship
+                map.put("internship_id", String.valueOf(internship.getId()));
+                return map;
+            }
+        };
+
+        if (h != null && h.itemView != null) {
+            Volley.newRequestQueue(h.itemView.getContext()).add(req);
+        } else if (getContext() != null) {
+            Volley.newRequestQueue(getContext()).add(req);
+        }
+    }
+
+
     // ===== STATUS CHECK (fixed "Checking..." bug) =====
     private void loadApplicationStatus(int internshipId, int userId, InternshipAdapter.ViewHolder h, Button apply) {
         String url = AddInternshipActivity.BASE_URL + "check_application_status.php";
@@ -213,6 +434,20 @@ public class InternshipDetailsDialog extends DialogFragment {
                         if (applied) {
                             String statusCode = obj.optString("status", "applied");
                             btnPickCv.setText("Uploaded");
+                            btnPickCv.setEnabled(false);
+                            // Once the student has applied (any status), hide the CV upload card
+                            if (cvLayout != null) {
+                                cvLayout.setVisibility(View.GONE);
+                            }
+
+                            // Only accepted students can rate the company
+                            if ("accepted".equals(statusCode)) {
+                                canRate = true;
+                            } else {
+                                canRate = false;
+                            }
+                            // Refresh rating UI based on this flag
+                            setupRatingSection();
                             if (h != null && h.btnApply != null) {
                                 h.btnApply.setEnabled(false);
                                 h.btnApply.setText(prettifyStatusShort(statusCode));
@@ -227,6 +462,10 @@ public class InternshipDetailsDialog extends DialogFragment {
                                 h.tvApplicationStatus.setText("Status: " + prettifyStatus(statusCode));
                             }
                         } else {
+                            // Not applied -> cannot rate
+                            canRate = false;
+                            setupRatingSection();
+
                             // Not applied yet -> check if slots are full
                             if (internship.getSlots() >= internship.getMaxSlots()) {
                                 btnPickCv.setText("Full");

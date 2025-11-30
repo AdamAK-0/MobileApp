@@ -8,6 +8,7 @@ $query = "
     SELECT 
         i.*,
         c.name AS company_name,
+        c.rating AS company_rating,
         COALESCE(active_apps.active_count, 0) AS slots
     FROM internships i
     INNER JOIN companies c 
@@ -36,7 +37,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         "name"          => $row["name"],
         "description"   => $row["description"],
         "photo"         => $row["photo"],
-        "rating"        => (float)$row["rating"],
+        "rating"        => isset($row["company_rating"]) ? (float)$row["company_rating"] : (float)$row["rating"],
         "start_date"    => $row["start_date"],
         "end_date"      => $row["end_date"],
         "type"          => $row["type"],

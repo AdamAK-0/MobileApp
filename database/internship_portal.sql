@@ -32,6 +32,22 @@ CREATE TABLE companies (
 ) ENGINE=InnoDB;
 
 -- --------------------
+-- COMPANY RATINGS (one row per user per company)
+-- --------------------
+CREATE TABLE company_ratings (
+    rating_id INT AUTO_INCREMENT PRIMARY KEY,
+    company_id INT NOT NULL,
+    user_id INT NOT NULL,
+    rating TINYINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_user_company (company_id, user_id),
+    FOREIGN KEY (company_id) REFERENCES companies(company_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+
+
+-- --------------------
 -- INTERNSHIPS
 -- --------------------
 CREATE TABLE internships (
