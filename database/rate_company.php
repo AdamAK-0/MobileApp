@@ -3,10 +3,10 @@ require_once 'connection.php';
 
 $company_id    = isset($_POST['company_id']) ? intval($_POST['company_id']) : 0;
 $user_id       = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
-$rating        = isset($_POST['rating']) ? intval($_POST['rating']) : 0;
+$rating        = isset($_POST['rating']) ? floatval($_POST['rating']) : 0;
 $internship_id = isset($_POST['internship_id']) ? intval($_POST['internship_id']) : 0;
 
-if ($company_id <= 0 || $user_id <= 0 || $rating < 1 || $rating > 5) {
+if ($company_id <= 0 || $user_id <= 0 || $rating < 0.0 || $rating > 5.0) {
     echo json_encode([
         "status"  => "error",
         "message" => "Invalid input"
