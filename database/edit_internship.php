@@ -17,8 +17,13 @@ $query = "UPDATE internships
           WHERE internship_id='$internship_id'";
 
 if(mysqli_query($con,$query)){
-    echo "success";
+    echo json_encode([
+        "status" => "success",
+        "internship_id" => $internship_id
+    ]);
 } else {
-    echo "fail";
+    echo json_encode([
+        "status" => "fail"
+    ]);
 }
 ?>
