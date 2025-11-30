@@ -26,7 +26,7 @@ public class Internship implements Serializable {
                       String description,
                       String type,
                       String photo,
-                      int rating,
+                      double rating,
                       String startDate,
                       String endDate,
                       int maxSlots,
