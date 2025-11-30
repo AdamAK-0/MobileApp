@@ -50,6 +50,7 @@ public class ProfileFragment extends Fragment {
             loadCompany(c);
         }
         ImageView btnEdit = view.findViewById(R.id.btnEdit);
+        btnEdit.setVisibility(View.VISIBLE);
 
         btnEdit.setOnClickListener(v -> {
             EditProfileFragment fragment = new EditProfileFragment();

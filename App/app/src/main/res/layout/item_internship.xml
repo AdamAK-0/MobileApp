@@ -66,22 +66,45 @@
                 android:maxLines="1"
                 android:ellipsize="end"/>
 
-            <TextView
-                android:id="@+id/tvInternType"
-                android:textSize="14sp"
-                android:textColor="@color/text_secondary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:id="@+id/tvApplicationStatus"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/status_not_applied"
-                android:textSize="12sp"
-                android:textColor="@color/text_secondary"
+                android:orientation="horizontal"
                 android:layout_marginTop="4dp"
-                android:visibility="gone" />
+                android:gravity="start"
+                android:layout_marginBottom="4dp"
+                android:spacing="8dp"> <!-- optional spacing attribute for some versions -->
+
+                <TextView
+                    android:id="@+id/tvInternType"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/chip_outline_gold"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:maxLines="1" />
+
+                <TextView
+                    android:id="@+id/tvApplicationStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/status_not_applied"
+                    android:textSize="12sp"
+                    android:textColor="@color/delete_btn_text"
+                    android:background="@drawable/chip_filled_gold"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:layout_marginStart="8dp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+
 
         </LinearLayout>
 

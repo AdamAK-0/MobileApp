@@ -1,6 +1,7 @@
 package com.lau.portin;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +37,10 @@ public class ProfileActivity extends AppCompatActivity {
         tvExtra1 = findViewById(R.id.tvExtra1);
         tvExtra2 = findViewById(R.id.tvExtra2);
         tvExtra3 = findViewById(R.id.tvExtra3);
+        ImageView btnEdit = findViewById(R.id.btnEdit);
+
+        btnEdit.setVisibility(View.GONE);
+
 
         String type = getIntent().getStringExtra("type");
 
