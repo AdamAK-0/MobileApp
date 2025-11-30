@@ -3,6 +3,7 @@ require_once 'connection.php';
 
 $user_id = $_POST['user_id'];
 $skill_name = $_POST['skill_name'];
+$score = isset($_POST['score']) ? floatval($_POST['score']) : 0;
 
 /* 1. Insert skill if not exists */
 $check = mysqli_query($con, "SELECT skill_id FROM skills WHERE skill_name='$skill_name'");
@@ -14,8 +15,10 @@ if(mysqli_num_rows($check) > 0){
     $skill_id = mysqli_insert_id($con);
 }
 
-/* 2. Link skill to user */
-$query = "INSERT INTO user_skills (user_id, skill_id) VALUES ('$user_id', '$skill_id')";
+/* 2. Link skill to user with score */
+$query = "INSERT INTO user_skills (user_id, skill_id, score) 
+          VALUES ('$user_id', '$skill_id', '$score')
+          ON DUPLICATE KEY UPDATE score='$score'"; // update if exists
 
 if(mysqli_query($con,$query)){
     echo "success";

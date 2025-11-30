@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.util.Pair;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -18,6 +19,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.lau.portin.ai.SkillExtractor;
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader;
 
@@ -28,11 +32,21 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+interface SkillExtractionCallback {
+    void onSkillsExtracted(List<JSONArray> extractedSkills);
+}
+// Callback interface
+interface InternshipSkillsCallback {
+    void onInternshipsFetched(List<JSONObject> internships);
+}
 
 public class SkillsFragment extends Fragment {
+    public static final String BASE_URL = "http://10.0.2.2/portin/";
 
-    Button btnUpload, btnExtract, btnTranscript;
+    Button btnUpload, btnExtract, btnTranscript, btntop5;
     TableLayout table;
     ArrayList<String> pdfTexts = new ArrayList<>();
     ArrayList<JSONArray> extractedArray = new ArrayList<>();
@@ -43,7 +57,7 @@ public class SkillsFragment extends Fragment {
     String transcriptRaw = null;
     boolean isTranscriptLoaded = false;
     boolean isPdfLoaded = false;
-
+    // Inside your fragment or a separate file
 
     @Nullable
     @Override
@@ -56,12 +70,41 @@ public class SkillsFragment extends Fragment {
         btnUpload = view.findViewById(R.id.btnUpload);
         btnExtract = view.findViewById(R.id.btnExtract);
         btnTranscript = view.findViewById(R.id.btnTranscript);
+        btntop5 = view.findViewById(R.id.btnTop5);
 
         table = view.findViewById(R.id.tableSkills);
 
         btnUpload.setOnClickListener(v -> pickPdf());
-        btnExtract.setOnClickListener(v -> extractSkillsPerPDF());
-        btnTranscript.setOnClickListener(v -> pickTranscript());
+        btnExtract.setOnClickListener(v -> {
+            extractSkillsPerPDF(new SkillExtractionCallback() {
+                @Override
+                public void onSkillsExtracted(List<JSONArray> extractedSkills) {
+                    if (getActivity() instanceof BaseFragmentActivity) {
+                        Log.d("SkillsFragment", "onSkillsExtracted called");
+                        BaseFragmentActivity main = (BaseFragmentActivity) getActivity();
+                        for (JSONArray skillsArr : extractedSkills) {
+                            saveExtractedSkillsToServer(main.currentUser.getUser_id(), skillsArr);
+                        }
+                    }
+                }
+            });
+        });
+        btntop5.setOnClickListener(v -> {
+                    if (getActivity() instanceof BaseFragmentActivity) {
+                        BaseFragmentActivity main = (BaseFragmentActivity) getActivity();
+                        fetchUserSkills(main.currentUser.getUser_id(), userSkills -> {
+                            fetchInternshipsWithSkills(internships -> {
+                                List<JSONObject> top5 = getTopInternshipsBySkills(userSkills, internships, 5);
+
+                                for (JSONObject intern : top5) {
+                                    Log.d("TopInternship", "Name: " + intern.optString("name"));
+                                }
+                            });
+                        });
+                    }
+                });
+
+            btnTranscript.setOnClickListener(v -> pickTranscript());
 
         PDFBoxResourceLoader.init(requireContext());
         btnExtract.setEnabled(false);
@@ -155,12 +198,22 @@ public class SkillsFragment extends Fragment {
         return text;
     }
 
-    private void extractSkillsPerPDF() {
+    private void extractSkillsPerPDF(SkillExtractionCallback callback) {
         Toast.makeText(getContext(), "Extracting skills…", Toast.LENGTH_LONG).show();
         extractedArray.clear();
+
         List<CourseGrade> trans = parseTranscript(transcriptRaw);
         Toast.makeText(getContext(), trans.size() + " courses found!", Toast.LENGTH_LONG).show();
-        Log.d("SkillsFragment", "First Course: " + trans.get(0).code);
+        Log.d("SkillsFragment", "First Course: " + (trans.isEmpty() ? "None" : trans.get(0).code));
+
+        if (pdfTexts.isEmpty()) {
+            callback.onSkillsExtracted(new ArrayList<>());
+            return;
+        }
+
+        final int totalPDFs = pdfTexts.size();
+        final int[] processedCount = {0};
+
         for (String t : pdfTexts) {
             String processedText = t;
             int index = processedText.toLowerCase().indexOf("student code of conduct");
@@ -168,6 +221,7 @@ public class SkillsFragment extends Fragment {
                 processedText = processedText.substring(0, index).trim();
                 Log.d("SkillsFragment", "Processed: " + processedText);
             }
+
             extractor.extractSkills(processedText, result -> requireActivity().runOnUiThread(() -> {
                 try {
                     String cleanResult = result.trim();
@@ -182,40 +236,47 @@ public class SkillsFragment extends Fragment {
                     if (cleanResult.startsWith("\"") && cleanResult.endsWith("\"")) {
                         cleanResult = cleanResult.substring(1, cleanResult.length() - 1).replace("\\\"", "\"");
                     }
-                    Log.d("SkillsFragment", "JSON: " + cleanResult);
+
                     JSONObject obj = new JSONObject(cleanResult);
-
-
-                    //JSONObject obj = new JSONObject(result);
                     JSONArray skillsArr = obj.getJSONArray("skills");
                     String title = obj.getString("course_name");
                     String code = obj.getString("course_code");
                     Log.d("SkillsFragment", "course_name: " + title + ", course_code: " + code);
+
                     for (CourseGrade c : trans) {
-                        if (c.code.toLowerCase().equals(code.toLowerCase().replace(" ","")) || c.code.toLowerCase().equals(code.toLowerCase()) || c.title.toLowerCase().equals(title.toLowerCase())) {
-                            for(int i = 0; i < skillsArr.length(); i++) {
+                        if (c.code.equalsIgnoreCase(code.replace(" ", "")) || c.code.equalsIgnoreCase(code) || c.title.equalsIgnoreCase(title)) {
+                            for (int i = 0; i < skillsArr.length(); i++) {
                                 skillsArr.put(i, skillsArr.optString(i) + " (" + gradeToPercent(c.grade) + "%)");
                                 Log.d("SkillsFragment", "Grade: " + c.grade);
                             }
                             break;
                         }
                     }
+
                     extractedArray.add(skillsArr);
-
-                    JSONArray combined = new JSONArray();
-                    for (int i = 0; i < extractedArray.size(); i++)
-                        for (int j = 0; j < extractedArray.get(i).length(); j++)
-                            combined.put(extractedArray.get(i).optString(j));
-
-                    showSkills(combined);
 
                 } catch (Exception e) {
                     Toast.makeText(getContext(), "Invalid AI format!", Toast.LENGTH_LONG).show();
                     Log.e("SkillsFragment", "Invalid AI format!", e);
+                } finally {
+                    // Increment processed count and check if all PDFs are done
+                    processedCount[0]++;
+                    if (processedCount[0] == totalPDFs) {
+                        // Combine all skills into one list for display and callback
+                        JSONArray combined = new JSONArray();
+                        for (int i = 0; i < extractedArray.size(); i++)
+                            for (int j = 0; j < extractedArray.get(i).length(); j++)
+                                combined.put(extractedArray.get(i).optString(j));
+
+                        showSkills(combined);
+                        // Call the callback with a copy of extractedArray
+                        callback.onSkillsExtracted(new ArrayList<>(extractedArray));
+                    }
                 }
             }));
         }
     }
+
 
     private void showSkills(JSONArray skills) {
         table.removeAllViews();
@@ -310,6 +371,185 @@ public class SkillsFragment extends Fragment {
             case "D": return 55;
             default: return 20; // F or unknown
         }
+    }
+    private void saveExtractedSkillsToServer(int userId, JSONArray combinedSkills) {
+        String url = BASE_URL + "add_user_skill.php";
+
+        for (int i = 0; i < combinedSkills.length(); i++) {
+            try {
+                String skillWithScore = combinedSkills.getString(i); // e.g., "Java (95%)"
+
+                // Extract skill name and score
+                String skillName = skillWithScore;
+                double score = 0;
+                int idx = skillWithScore.lastIndexOf("(");
+                if (idx != -1 && skillWithScore.endsWith("%)")) {
+                    skillName = skillWithScore.substring(0, idx).trim();
+                    try {
+                        String percentStr = skillWithScore.substring(idx + 1, skillWithScore.length() - 2);
+                        score = Double.parseDouble(percentStr);
+                    } catch (Exception e) {
+                        score = 0;
+                    }
+                }
+
+                double finalScore = score;
+                String finalSkillName = skillName;
+
+                StringRequest req = new StringRequest(Request.Method.POST, url,
+                        response -> {
+                            if (!response.contains("success")) {
+                                Log.e("SaveSkill", "Failed to save skill: " + finalSkillName);
+                            } else {
+                                Log.d("SaveSkill", "Saved skill: " + finalSkillName + " (" + finalScore + "%)");
+                            }
+                        },
+                        error -> Log.e("SaveSkill", "Network error while saving skill: " + finalSkillName)
+                ) {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> map = new HashMap<>();
+                        map.put("user_id", String.valueOf(userId));
+                        map.put("skill_name", finalSkillName);
+                        map.put("score", String.valueOf(finalScore));
+                        return map;
+                    }
+                };
+
+                Volley.newRequestQueue(requireContext()).add(req);
+
+            } catch (Exception e) {
+                Log.e("SaveSkill", "Error reading skill from JSON", e);
+            }
+        }
+    }
+
+    private void fetchUserSkills(int userId, SkillExtractionCallback callback) {
+        String url = BASE_URL + "get_user_skills.php?user_id=" + userId;
+
+        StringRequest request = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                        if (obj.optString("status").equals("success")) {
+                            JSONArray skillsArray = obj.getJSONArray("skills");
+                            List<JSONArray> extractedSkills = new ArrayList<>();
+
+                            for (int i = 0; i < skillsArray.length(); i++) {
+                                JSONObject skillObj = skillsArray.getJSONObject(i);
+                                String skillName = skillObj.getString("skill_name");
+                                double score = skillObj.optDouble("score", 0);
+
+                                // Wrap as JSONArray with "SkillName (score%)"
+                                JSONArray skillJsonArray = new JSONArray();
+                                skillJsonArray.put(skillName + " (" + score + "%)");
+                                extractedSkills.add(skillJsonArray);
+                            }
+                            Log.d("FetchSkills", "Extracted skills: " + extractedSkills);
+                            callback.onSkillsExtracted(extractedSkills);
+
+                        } else {
+                            Log.e("FetchSkills", "Failed: " + obj.optString("error"));
+                        }
+                    } catch (Exception e) {
+                        Log.e("FetchSkills", "Parsing error", e);
+                    }
+                },
+                error -> Log.e("FetchSkills", "Network error", error)
+        );
+
+        Volley.newRequestQueue(requireContext()).add(request);
+    }
+
+    private void fetchInternshipsWithSkills(InternshipSkillsCallback callback) {
+        String url = BASE_URL + "get_internships_with_skills.php";
+
+        StringRequest request = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                        if(obj.optString("status").equals("success")) {
+                            JSONArray internshipsArray = obj.getJSONArray("internships");
+                            List<JSONObject> internships = new ArrayList<>();
+
+                            for (int i = 0; i < internshipsArray.length(); i++) {
+                                internships.add(internshipsArray.getJSONObject(i));
+                            }
+                            Log.d("FetchInternships", "Fetched " + internships);
+                            callback.onInternshipsFetched(internships);
+                        } else {
+                            Log.e("FetchInternships", "Failed to fetch internships");
+                        }
+                    } catch (Exception e) {
+                        Log.e("FetchInternships", "Parsing error", e);
+                    }
+                },
+                error -> Log.e("FetchInternships", "Network error", error)
+        );
+
+        Volley.newRequestQueue(requireContext()).add(request);
+    }
+    private List<JSONObject> getTopInternshipsBySkills(
+            List<JSONArray> userSkills,
+            List<JSONObject> internships,
+            int topN
+    ) {
+        // Map user skills to their scores
+        Map<String, Double> userSkillMap = new HashMap<>();
+        for (JSONArray skillArr : userSkills) {
+            for (int i = 0; i < skillArr.length(); i++) {
+                String skillWithScore = skillArr.optString(i); // e.g., "Java (95%)"
+                if (skillWithScore.contains("(") && skillWithScore.endsWith("%)")) {
+                    int idx = skillWithScore.lastIndexOf("(");
+                    String skillName = skillWithScore.substring(0, idx).trim();
+                    String scoreStr = skillWithScore.substring(idx + 1, skillWithScore.length() - 2).trim();
+                    try {
+                        double score = Double.parseDouble(scoreStr);
+                        userSkillMap.put(skillName.toLowerCase(), score);
+                    } catch (NumberFormatException e) {
+                        // ignore invalid score
+                    }
+                } else {
+                    // no score? set default 0
+                    userSkillMap.put(skillWithScore.toLowerCase(), 0.0);
+                }
+            }
+        }
+
+        // Compute score for each internship
+        List<Pair<JSONObject, Double>> scoredInternships = new ArrayList<>();
+
+        for (JSONObject internship : internships) {
+            JSONArray requiredSkills = internship.optJSONArray("skills");
+            if (requiredSkills == null || requiredSkills.length() == 0) continue;
+
+            double totalScore = 0;
+            int matchedCount = 0;
+
+            for (int i = 0; i < requiredSkills.length(); i++) {
+                String skillName = requiredSkills.optString(i).toLowerCase();
+                if (userSkillMap.containsKey(skillName)) {
+                    totalScore += userSkillMap.get(skillName);
+                    matchedCount++;
+                }
+            }
+
+            if (matchedCount > 0) {
+                double avgScore = totalScore / matchedCount;
+                scoredInternships.add(new Pair<>(internship, avgScore));
+            }
+        }
+
+        // Sort internships by descending avgScore
+        scoredInternships.sort((a, b) -> Double.compare(b.second, a.second));
+
+        // Take top N
+        List<JSONObject> topInternships = new ArrayList<>();
+        for (int i = 0; i < Math.min(topN, scoredInternships.size()); i++) {
+            topInternships.add(scoredInternships.get(i).first);
+        }
+
+        return topInternships;
     }
 
 }
