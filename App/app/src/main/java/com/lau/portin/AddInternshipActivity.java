@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.text.ParseException;
 import com.android.volley.Request;
@@ -273,19 +274,25 @@ public class AddInternshipActivity extends AppCompatActivity {
                             if(editMode) {
                                 // Before saving new skills after editing
                                 deleteAllSkills(internshipId, () -> {
-                                    // Now save the new skills
                                     InternshipSkillExtractor extractor = new InternshipSkillExtractor();
-                                    extractor.extractSkills(desc.getText().toString(), result -> {
-                                        try {
-                                            JSONObject json = new JSONObject(result);
-                                            JSONArray skills = json.getJSONArray("skills");
+                                    // Now save the new skills
+                                    extractor.fetchDatabaseSkills(this, new InternshipSkillExtractor.SkillFetchCallback() {
+                                        @Override
+                                        public void onSuccess(ArrayList<String> skills) {
 
-                                            for (int i = 0; i < skills.length(); i++) {
-                                                String skill = skills.getString(i);
-                                                saveSkillToServer(internshipId, skill);
-                                            }
-                                        } catch (Exception e) {
-                                            Log.e("SkillExtract", "Parsing failed: " + result);
+                                            // NOW masterSkills is filled, so you can safely extract
+                                            extractor.extractSkills(desc.getText().toString(), new InternshipSkillExtractor.ExtractCallback() {
+                                                @Override
+                                                public void onResult(String jsonResult) {
+                                                    Log.d("RESULT", jsonResult);
+                                                    handleExtractedSkills(internshipId, jsonResult);
+                                                }
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onFailure(Exception e) {
+                                            Log.e("ERROR", e.toString());
                                         }
                                     });
                                 });
@@ -294,21 +301,25 @@ public class AddInternshipActivity extends AppCompatActivity {
 
                             // Extract skills and save them using internshipId
                             InternshipSkillExtractor extractor = new InternshipSkillExtractor();
-                            extractor.extractSkills(desc.getText().toString(), result -> {
-                                try {
-                                    JSONObject json = new JSONObject(result);
-                                    JSONArray skills = json.getJSONArray("skills");
+                                extractor.fetchDatabaseSkills(this, new InternshipSkillExtractor.SkillFetchCallback() {
+                                    @Override
+                                    public void onSuccess(ArrayList<String> skills) {
 
-                                    for (int i = 0; i < skills.length(); i++) {
-                                        String skill = skills.getString(i);
-                                        saveSkillToServer(internshipId, skill); // send ID with each skill
+                                        // NOW masterSkills is filled, so you can safely extract
+                                        extractor.extractSkills(desc.getText().toString(), new InternshipSkillExtractor.ExtractCallback() {
+                                            @Override
+                                            public void onResult(String jsonResult) {
+                                                Log.d("RESULT", jsonResult);
+                                                handleExtractedSkills(internshipId, jsonResult);
+                                            }
+                                        });
                                     }
 
-                                } catch (Exception e) {
-                                    Log.e("SkillExtract", "Parsing failed: " + result, e);
-                                }
-
-                            });}
+                                    @Override
+                                    public void onFailure(Exception e) {
+                                        Log.e("ERROR", e.toString());
+                                    }
+                                });}
 
                             finish();
 
@@ -368,6 +379,30 @@ public class AddInternshipActivity extends AppCompatActivity {
 
         Volley.newRequestQueue(this).add(stringRequest);
     }
+    private void handleExtractedSkills(int internshipId, String json) {
+        try {
+            JSONObject obj = new JSONObject(json);
+
+            JSONArray normalized = obj.getJSONArray("normalized");
+            JSONArray newSkills = obj.getJSONArray("new_skills");
+
+            // Save normalized skills
+            for (int i = 0; i < normalized.length(); i++) {
+                String skill = normalized.getString(i).trim();
+                saveSkillToServer(internshipId, skill);
+            }
+
+            // Save brand NEW skills (user wants these added)
+            for (int i = 0; i < newSkills.length(); i++) {
+                String skill = newSkills.getString(i).trim();
+                saveSkillToServer(internshipId, skill);
+            }
+
+        } catch (Exception e) {
+            Log.e("SKILL_PARSE", "Failed parsing skills: " + e.getMessage());
+        }
+    }
+
     private void deleteAllSkills(int internshipId, Runnable onComplete) {
         String url = BASE_URL + "delete_internship_skills.php"; // your PHP script
 
