@@ -15,8 +15,14 @@ $query = "INSERT INTO internships (company_id, name, description, photo, rating,
           VALUES ('$company_id','$name','$description','$photo','$rating','$start_date','$end_date','$type','$max_slots')";
 
 if(mysqli_query($con,$query)){
-    echo "success";
+    $internship_id = mysqli_insert_id($con);
+    echo json_encode([
+        "status" => "success",
+        "internship_id" => $internship_id
+    ]);
 } else {
-    echo "fail";
+    echo json_encode([
+        "status" => "fail"
+    ]);
 }
 ?>
