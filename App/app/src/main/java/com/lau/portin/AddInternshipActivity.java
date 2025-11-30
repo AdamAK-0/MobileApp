@@ -26,10 +26,14 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.lau.portin.ai.InternshipSkillExtractor;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddInternshipActivity extends AppCompatActivity {
 
@@ -252,41 +256,144 @@ public class AddInternshipActivity extends AppCompatActivity {
 
     void submitData(String imageFileName) {
         String url = BASE_URL + "post_internship.php";
-        if(editMode) url = BASE_URL + "edit_internship.php";
+        if (editMode) url = BASE_URL + "edit_internship.php";
 
         StringRequest req = new StringRequest(Request.Method.POST, url,
                 response -> {
-                    if (response.contains("success")) {
-                        if(editMode)
-                            Toast.makeText(this, "Internship Updated", Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(this, "Internship Added", Toast.LENGTH_SHORT).show();
-                        finish();
+                    try {
+                        int internshipId;
+                        JSONObject obj = new JSONObject(response);
+                        if (obj.optString("status").equals("success")) {
+                            if(editMode)
+                                internshipId = obj.getInt("internship_id");
+                            else
+                                internshipId = internship.getId();
+
+                            Toast.makeText(this, editMode ? "Internship Updated" : "Internship Added", Toast.LENGTH_SHORT).show();
+                            if(editMode) {
+                                // Before saving new skills after editing
+                                deleteAllSkills(internshipId, () -> {
+                                    // Now save the new skills
+                                    InternshipSkillExtractor extractor = new InternshipSkillExtractor();
+                                    extractor.extractSkills(desc.getText().toString(), result -> {
+                                        try {
+                                            JSONObject json = new JSONObject(result);
+                                            JSONArray skills = json.getJSONArray("skills");
+
+                                            for (int i = 0; i < skills.length(); i++) {
+                                                String skill = skills.getString(i);
+                                                saveSkillToServer(internshipId, skill);
+                                            }
+                                        } catch (Exception e) {
+                                            Log.e("SkillExtract", "Parsing failed: " + result);
+                                        }
+                                    });
+                                });
+
+                            } else {
+
+                            // Extract skills and save them using internshipId
+                            InternshipSkillExtractor extractor = new InternshipSkillExtractor();
+                            extractor.extractSkills(desc.getText().toString(), result -> {
+                                try {
+                                    JSONObject json = new JSONObject(result);
+                                    JSONArray skills = json.getJSONArray("skills");
+
+                                    for (int i = 0; i < skills.length(); i++) {
+                                        String skill = skills.getString(i);
+                                        saveSkillToServer(internshipId, skill); // send ID with each skill
+                                    }
+
+                                } catch (Exception e) {
+                                    Log.e("SkillExtract", "Parsing failed: " + result, e);
+                                }
+
+                            });}
+
+                            finish();
+
+                        } else {
+                            Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(this, "Parsing Error", Toast.LENGTH_SHORT).show();
+                        Log.e("VOLLEY", "Parsing error: " + e.getMessage());
                     }
-                    else
-                        Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
                 },
                 error -> Toast.makeText(this, "Network Error", Toast.LENGTH_SHORT).show()
         ) {
             @Override
             protected java.util.Map<String, String> getParams() {
                 java.util.Map<String, String> map = new java.util.HashMap<>();
-
                 map.put("company_id", String.valueOf(c.getCompany_id()));
                 map.put("name", name.getText().toString());
                 map.put("description", desc.getText().toString());
-                map.put("rating", 0 + "");
+                map.put("rating", "0");
                 map.put("start_date", start.getText().toString());
                 map.put("end_date", end.getText().toString());
                 map.put("type", type.getSelectedItem().toString());
                 map.put("max_slots", slots.getText().toString());
                 map.put("photo", imageFileName);
-                if(editMode && internship != null)
+
+                if (editMode && internship != null) {
                     map.put("internship_id", String.valueOf(internship.getId()));
+                }
                 return map;
             }
         };
 
         Volley.newRequestQueue(this).add(req);
     }
+    private void saveSkillToServer(int internshipId, String skillName) {
+        String url = BASE_URL + "add_internship_skill.php";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    if (response.trim().equals("success")) {
+                        Log.d("VOLLEY", "Skill saved successfully");
+                    } else {
+                        Log.e("VOLLEY", "Failed: " + response);
+                    }
+                },
+                error -> Log.e("VOLLEY", "Volley error: " + error.getMessage())
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("internship_id", String.valueOf(internshipId));
+                params.put("skill_name", skillName); // EXACT matching your PHP
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(this).add(stringRequest);
+    }
+    private void deleteAllSkills(int internshipId, Runnable onComplete) {
+        String url = BASE_URL + "delete_internship_skills.php"; // your PHP script
+
+        StringRequest req = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    if (response.contains("success")) {
+                        Log.d("DeleteSkills", "All skills deleted for internship " + internshipId);
+                        if (onComplete != null) {
+                            onComplete.run(); // Continue with adding new skills
+                        }
+                    } else {
+                        Toast.makeText(this, "Failed to delete previous skills", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(this, "Network error while deleting skills", Toast.LENGTH_SHORT).show()
+        ) {
+            @Override
+            protected java.util.Map<String, String> getParams() {
+                java.util.Map<String, String> map = new java.util.HashMap<>();
+                map.put("internship_id", String.valueOf(internshipId));
+                return map;
+            }
+        };
+
+        Volley.newRequestQueue(this).add(req);
+    }
+
+
 }
