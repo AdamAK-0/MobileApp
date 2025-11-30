@@ -50,6 +50,11 @@
             android:name=".BaseFragmentActivity"
             android:exported="false">
         </activity>
+        <activity
+            android:name=".TopInternshipsActivity"
+            android:exported="false">
+        </activity>
+
     </application>
 
 </manifest>

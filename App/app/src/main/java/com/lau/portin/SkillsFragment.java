@@ -90,19 +90,30 @@ public class SkillsFragment extends Fragment {
             });
         });
         btntop5.setOnClickListener(v -> {
-                    if (getActivity() instanceof BaseFragmentActivity) {
-                        BaseFragmentActivity main = (BaseFragmentActivity) getActivity();
-                        fetchUserSkills(main.currentUser.getUser_id(), userSkills -> {
-                            fetchInternshipsWithSkills(internships -> {
-                                List<JSONObject> top5 = getTopInternshipsBySkills(userSkills, internships, 5);
+            if (getActivity() instanceof BaseFragmentActivity) {
+                BaseFragmentActivity main = (BaseFragmentActivity) getActivity();
+                fetchUserSkills(main.currentUser.getUser_id(), userSkills -> {
+                    fetchInternshipsWithSkills(internships -> {
+                        List<JSONObject> top5 = getTopInternshipsBySkills(userSkills, internships, 5);
 
-                                for (JSONObject intern : top5) {
-                                    Log.d("TopInternship", "Name: " + intern.optString("name"));
-                                }
-                            });
-                        });
-                    }
+                        try {
+                            // Convert top5 to JSONArray string
+                            JSONArray top5Json = new JSONArray();
+                            for (JSONObject obj : top5) top5Json.put(obj);
+
+                            Intent intent = new Intent(getContext(), TopInternshipsActivity.class);
+                            intent.putExtra("top_internships", top5Json.toString());
+                            intent.putExtra("user", main.currentUser);
+                            startActivity(intent);
+
+                        } catch (Exception e) {
+                            Log.e("TopInternship", "Error passing top internships", e);
+                        }
+                    });
                 });
+            }
+        });
+
 
             btnTranscript.setOnClickListener(v -> pickTranscript());
 

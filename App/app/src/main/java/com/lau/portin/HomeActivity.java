@@ -236,7 +236,7 @@ public class HomeActivity extends BaseActivity {
                                     o.getString("name"),
                                     o.getString("description"),
                                     o.getString("type"),
-                                    BASE_URL + "uploads/" + o.getString("photo"),
+                                    o.optString("photo", ""),
                                     o.getInt("rating"),
                                     o.getString("start_date"),
                                     o.getString("end_date"),
