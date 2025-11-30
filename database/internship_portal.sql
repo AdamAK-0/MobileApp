@@ -139,8 +139,10 @@ CREATE TABLE syllabi (
 CREATE TABLE user_skills (
     user_id INT,
     skill_id INT,
+    score DOUBLE DEFAULT 0,         -- new field to store skill score
     PRIMARY KEY (user_id, skill_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (skill_id) REFERENCES skills(skill_id) ON DELETE CASCADE
 );
+
 

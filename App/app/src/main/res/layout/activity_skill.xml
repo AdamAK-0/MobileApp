@@ -37,7 +37,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:textColor="@color/delete_btn_text"/>
-
+        <Button
+            android:id="@+id/btnTop5"
+            android:text="@string/top_5_internships"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/delete_btn_text"/>
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"

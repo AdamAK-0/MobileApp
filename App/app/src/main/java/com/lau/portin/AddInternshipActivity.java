@@ -264,7 +264,7 @@ public class AddInternshipActivity extends AppCompatActivity {
                         int internshipId;
                         JSONObject obj = new JSONObject(response);
                         if (obj.optString("status").equals("success")) {
-                            if(editMode)
+                            if(!editMode)
                                 internshipId = obj.getInt("internship_id");
                             else
                                 internshipId = internship.getId();
