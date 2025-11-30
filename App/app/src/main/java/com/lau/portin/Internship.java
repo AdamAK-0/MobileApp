@@ -11,7 +11,7 @@ public class Internship implements Serializable {
     public String description;
     public String type;
     public String photo;
-    public int rating;
+    public double rating;
     public String startDate;
     public String endDate;
     public int maxSlots;
@@ -77,7 +77,7 @@ public class Internship implements Serializable {
         return photo;
     }
 
-    public int getRating() {
+    public double getRating() {
         return rating;
     }
 

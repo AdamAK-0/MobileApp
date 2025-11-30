@@ -252,8 +252,8 @@ public class InternshipDetailsDialog extends DialogFragment {
 
                 if (btnSubmitRating != null) {
                     btnSubmitRating.setOnClickListener(v -> {
-                        int value = Math.round(ratingBar.getRating());
-                        if (value < 1 || value > 5) {
+                        float value = ratingBar.getRating();
+                        if (value < 0.0 || value > 5.0) {
                             Toast.makeText(getContext(), "Please rate between 1 and 5 stars", Toast.LENGTH_SHORT).show();
                             return;
                         }
@@ -294,7 +294,7 @@ public class InternshipDetailsDialog extends DialogFragment {
 
                         double avg = obj.optDouble("average", 0.0);
                         int count = obj.optInt("count", 0);
-                        int userRating = obj.optInt("user_rating", 0);
+                        float userRating = (float) obj.optDouble("user_rating", 0.0);
 
                         // LinkedIn-style behavior:
                         // - If canRate == true (accepted student): this screen is for rating only.
@@ -312,7 +312,7 @@ public class InternshipDetailsDialog extends DialogFragment {
                                 ratingBar.setIsIndicator(false);
                                 // Student should not rate "on top of" old stars (average).
                                 // Always start from empty stars; they pick their own value.
-                                ratingBar.setRating(0f);
+                                ratingBar.setRating((float)avg);
                             }
                         } else {
                             // Viewer mode (company or non-accepted student)
@@ -337,7 +337,7 @@ public class InternshipDetailsDialog extends DialogFragment {
                         }
 
                         // Keep internship object roughly in sync with backend average
-                        internship.rating = (int) Math.round(avg);
+                        internship.rating = avg;
 
                     } catch (JSONException e) {
                         // Ignore parse errors, keep default UI
@@ -366,7 +366,7 @@ public class InternshipDetailsDialog extends DialogFragment {
         }
     }
 
-        private void submitCompanyRating(int companyId, int userId, int ratingValue) {
+        private void submitCompanyRating(int companyId, int userId, float ratingValue) {
         String url = AddInternshipActivity.BASE_URL + "rate_company.php";
 
         StringRequest req = new StringRequest(
